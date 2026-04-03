@@ -12,14 +12,14 @@ from pydantic import BaseModel, Field
 
 from src.scipeerai.modules.stat_audit import StatAuditEngine
 from src.scipeerai.modules.figure_forensics import FigureForensicsEngine
-
+from src.scipeerai.modules.methodology_checker import MethodologyChecker
 
 router = APIRouter(prefix="/api/v1", tags=["Analysis"])
 
 # initialize engines once — not on every request
 _stat_engine   = StatAuditEngine()
 _figure_engine = FigureForensicsEngine()
-
+_method_engine = MethodologyChecker()
 
 # ── request / response models ─────────────────────────────────────────────────
 
@@ -182,3 +182,66 @@ async def analyze_figures(file: UploadFile = File(...)):
         # always clean up temp file — even if analysis crashed
         if 'tmp_path' in locals() and os.path.exists(tmp_path):
             os.unlink(tmp_path)
+            
+            
+class MethodologyRequest(BaseModel):
+    text: str = Field(..., min_length=50,
+                      description="Full paper text for methodology analysis")
+    abstract: str = Field("", description="Abstract separately (optional but recommended)")
+
+
+class MethodologyFlagResponse(BaseModel):
+    flag_type: str
+    severity: str
+    claim: str
+    issue: str
+    evidence: str
+    suggestion: str
+
+
+class MethodologyResponse(BaseModel):
+    risk_level: str
+    risk_score: float
+    summary: str
+    flags: list[MethodologyFlagResponse]
+    claims_found: list[str]
+    methods_found: list[str]
+    llm_assessment: str
+    llm_available: bool
+    flags_count: int
+
+
+@router.post("/analyze/methodology", response_model=MethodologyResponse)
+def analyze_methodology(request: MethodologyRequest):
+    """
+    Analyze paper text for methodology logic issues.
+
+    Detects: causation claims without RCT, missing control groups,
+    timeframe mismatches, weak design with strong claims,
+    overgeneralization. Includes LLM reasoning if HF token configured.
+    """
+    try:
+        result = _method_engine.analyze(request.text, request.abstract)
+        return MethodologyResponse(
+            risk_level=result.risk_level,
+            risk_score=result.risk_score,
+            summary=result.summary,
+            flags=[
+                MethodologyFlagResponse(
+                    flag_type=f.flag_type,
+                    severity=f.severity,
+                    claim=f.claim,
+                    issue=f.issue,
+                    evidence=f.evidence,
+                    suggestion=f.suggestion,
+                )
+                for f in result.flags
+            ],
+            claims_found=result.claims_found,
+            methods_found=result.methods_found,
+            llm_assessment=result.llm_assessment,
+            llm_available=result.llm_available,
+            flags_count=len(result.flags),
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
