@@ -1,114 +1,82 @@
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0a0a0a,50:0d0040,100:001a33&height=300&section=header&text=🔬%20SciPeerAI&fontSize=75&fontColor=00aaff&animation=fadeIn&fontAlignY=38&desc=Automated%20Scientific%20Integrity%20%26%20Peer%20Review%20Analysis%20System&descSize=18&descAlignY=58&descAlign=50&descColor=0077cc" width="100%"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:000000,30:0a0020,60:120038,100:1a0050&height=320&section=header&text=🔬%20SciPeerAI&fontSize=80&fontColor=ffffff&animation=fadeIn&fontAlignY=38&desc=The%20AI%20That%20Catches%20What%20Peer%20Reviewers%20Miss&descSize=20&descAlignY=60&descAlign=50&descColor=bb88ff" width="100%"/>
 
 <br/>
 
-<img src="https://readme-typing-svg.herokuapp.com?font=JetBrains+Mono&weight=700&size=22&pause=1000&color=00AAFF&center=true&vCenter=true&width=900&lines=p-Hacking+Detection+%E2%80%94+Statistical+Audit+Engine;Figure+Forensics+%E2%80%94+ELA+%2B+Perceptual+Hashing;Methodology+Logic+Checker+%E2%80%94+LLM-Powered;Production+FastAPI+%7C+Docker+%7C+13+Tests+Passing" />
+<img src="https://readme-typing-svg.herokuapp.com?font=JetBrains+Mono&weight=700&size=24&pause=1000&color=BB88FF&center=true&vCenter=true&width=900&lines=Statistical+Fraud+Detection+Engine;Figure+Forensics+%2B+ELA+Analysis;p-Hacking+%7C+Duplicate+Images+%7C+Risk+Scoring;Built+for+the+Global+Scientific+Community" />
 
 <br/><br/>
 
 <a href="https://github.com/Abu-Sameer-66/SciPeerAI">
-<img src="https://img.shields.io/badge/%F0%9F%94%AC%20SciPeerAI-Scientific%20Integrity%20AI-00aaff?style=for-the-badge&labelColor=001a33"/>
+<img src="https://img.shields.io/badge/%F0%9F%9F%A3%20LIVE%20REPO-GitHub-bb88ff?style=for-the-badge&labelColor=0a0020"/>
 </a>
 &nbsp;
 <a href="https://github.com/Abu-Sameer-66/SciPeerAI/blob/main/LICENSE">
-<img src="https://img.shields.io/badge/License-MIT-0077cc?style=for-the-badge&labelColor=001a33"/>
+<img src="https://img.shields.io/badge/License-MIT-9955ff?style=for-the-badge&labelColor=120038"/>
 </a>
 &nbsp;
-<a href="https://github.com/Abu-Sameer-66/SciPeerAI/actions">
-<img src="https://img.shields.io/badge/Tests-13%20Passing-00ff88?style=for-the-badge&labelColor=001a33"/>
+<a href="https://sameer-nadeem-portfolio.vercel.app">
+<img src="https://img.shields.io/badge/%F0%9F%8C%90%20PORTFOLIO-Live-bb88ff?style=for-the-badge&labelColor=0a0020"/>
 </a>
 
 <br/><br/>
 
-<img src="https://img.shields.io/badge/Python-3.10-00aaff?style=flat-square&logo=python&logoColor=black&labelColor=001a33"/>
-<img src="https://img.shields.io/badge/FastAPI-REST%20API-0077cc?style=flat-square&logo=fastapi&logoColor=white&labelColor=001a33"/>
-<img src="https://img.shields.io/badge/PyMuPDF-PDF%20Engine-00aaff?style=flat-square&labelColor=001a33"/>
-<img src="https://img.shields.io/badge/Pillow-Image%20Analysis-0077cc?style=flat-square&labelColor=001a33"/>
-<img src="https://img.shields.io/badge/imagehash-Perceptual%20Hash-00aaff?style=flat-square&labelColor=001a33"/>
-<img src="https://img.shields.io/badge/pytest-13%20Tests-00ff88?style=flat-square&logo=pytest&logoColor=black&labelColor=001a33"/>
-<img src="https://img.shields.io/badge/Docker-Ready-0077cc?style=flat-square&logo=docker&logoColor=white&labelColor=001a33"/>
+<img src="https://img.shields.io/badge/Python-3.10-bb88ff?style=flat-square&logo=python&logoColor=black&labelColor=0a0020"/>
+<img src="https://img.shields.io/badge/FastAPI-0.115-9955ff?style=flat-square&logo=fastapi&logoColor=white&labelColor=120038"/>
+<img src="https://img.shields.io/badge/PyMuPDF-PDF%20Engine-bb88ff?style=flat-square&labelColor=0a0020"/>
+<img src="https://img.shields.io/badge/Pillow-Image%20Analysis-9955ff?style=flat-square&labelColor=120038"/>
+<img src="https://img.shields.io/badge/imagehash-Perceptual%20Hash-bb88ff?style=flat-square&labelColor=0a0020"/>
+<img src="https://img.shields.io/badge/pytest-13%20Tests-9955ff?style=flat-square&logo=pytest&logoColor=white&labelColor=120038"/>
+<img src="https://img.shields.io/badge/Docker-Ready-bb88ff?style=flat-square&logo=docker&logoColor=white&labelColor=0a0020"/>
 
 </div>
 
 ---
 
-## The Problem
+## The Crisis Nobody Is Solving
 
-Science has a **reproducibility crisis**.
+**70% of published scientific findings cannot be replicated.**
 
-Over **70% of researchers** cannot replicate published findings (Nature, 2016). Peer review is broken — overworked reviewers, months of delays, human bias, missed statistical fraud. Every year, flawed papers get published that:
+That number is not a typo. It is the reproducibility crisis — and it is quietly costing the world billions of dollars in wasted follow-up research, corrupting medical decisions, and eroding the public's trust in science itself.
 
-- Waste **billions** in follow-up research
-- In medical contexts — **directly harm patients**
-- Erode **public trust** in science globally
+The problem is not that scientists are dishonest. The problem is that **peer review is broken by design.**
 
-The root causes are detectable. They hide inside the statistics, figures, and methodology of every paper. The problem is **scale** — no human reviewer can check everything, in every paper, every time.
+Reviewers are overworked. They check one paper at a time. They cannot cross-reference figures across 50 pages. They cannot detect when p-values have been massaged to look significant. They cannot run forensic analysis on every image in a manuscript.
 
-**SciPeerAI does.**
+**A machine can.**
+
+That is what SciPeerAI is.
 
 ---
 
 ## What It Does
 
-SciPeerAI is a multi-module REST API that ingests a scientific paper and returns a structured integrity report across six dimensions:
-Paper Input (Text / PDF)
-│
-├── [✅] Statistical Audit      → p-hacking, underpowered studies,
-│                                  suspicious round numbers, missing tests
-│
-├── [✅] Figure Forensics       → duplicate images (perceptual hash),
-│                                  ELA editing artifacts, brightness anomalies
-│
-├── [🔧] Methodology Checker   → LLM-powered logic validation
-│                                  "Does the method actually prove the claim?"
-│
-├── [🔧] Citation Analyzer     → retracted sources, self-citation abuse,
-│                                  citation manipulation detection
-│
-├── [🔧] Reproducibility Check → linked code/data availability,
-│                                  environment reproducibility scoring
-│
-└── [🔧] Novelty Scorer        → semantic similarity vs existing literature,
-incremental vs genuinely novel contribution
-Every module returns:
-- **Risk Score** `0.0 → 1.0`
-- **Risk Level** `low / medium / high / critical`
-- **Specific Flags** with evidence and actionable reviewer suggestions
-
----
-
-## Novel Technical Contributions
-
-This is not a wrapper around existing tools. Each module introduces approaches not found in any current peer review system.
-
 <table>
 <tr>
 <td width="50%">
 
-### 📊 Statistical Audit Engine
-Combined detection of **p-hacking + underpowered sample sizes + suspiciously round p-values** into a single unified risk score. Existing tools (Statcheck) check one dimension only. We check four simultaneously and weight them into a calibrated risk score.
+### ✅ Statistical Audit Engine
+Detects p-hacking by identifying suspicious clusters of p-values near the 0.05 threshold. Flags underpowered sample sizes. Catches suspiciously round numbers that real data almost never produces.
+
+**Novel:** Combines three detection patterns into one unified weighted risk score. No existing tool — Statcheck, GRIM, or SPRITE — does all three simultaneously.
+
+### ✅ Figure Forensics Pipeline
+Extracts every image from a PDF and runs three-layer forensic analysis: perceptual hashing for duplicate/recycled figures, Error Level Analysis for JPEG editing artifacts, and brightness uniformity scoring for artificial image enhancement.
+
+**Novel:** No existing automated tool combines all three forensic layers in one pipeline.
 
 </td>
 <td width="50%">
 
-### 🖼️ Figure Forensics Pipeline
-Three-layer forensic analysis: **perceptual hashing** for duplicate detection + **Error Level Analysis** for JPEG editing artifacts + **brightness uniformity scoring** for artificial enhancement. No existing tool combines all three in one automated pipeline.
+### 🔧 Methodology Logic Checker *(Coming)*
+LLM-powered reasoning engine that reads the methods section and asks: does this method actually prove this claim? The gap between what was done and what was concluded is where most soft fraud lives.
 
-</td>
-</tr>
-<tr>
-<td width="50%">
+### 🔧 Citation Integrity Analyzer *(Coming)*
+Graph-based detection of self-citation abuse, circular citation rings, and references to retracted papers — problems invisible to manual review.
 
-### 🧠 SciPeerBench (Coming)
-A curated benchmark dataset of papers with **known integrity issues** (retracted, corrected, fraudulent) for evaluating AI review systems. The first benchmark of its kind — designed to be a globally citable research contribution.
-
-</td>
-<td width="50%">
-
-### ⚙️ Unified Risk Engine
-All modules feed into a single **pipeline orchestrator** that produces a composite integrity report. A journal can integrate one API call and get back a structured audit — replacing months of manual review.
+### 🔧 SciPeerBench *(Coming)*
+The first curated benchmark dataset of papers with known integrity issues — retracted, corrected, fraudulent — built specifically for evaluating AI review systems. Designed to be a globally cited research contribution.
 
 </td>
 </tr>
@@ -116,108 +84,73 @@ All modules feed into a single **pipeline orchestrator** that produces a composi
 
 ---
 
-## Why SciPeerAI is Different
-
-| Capability | Existing Tools | SciPeerAI |
-|:---|:---:|:---:|
-| p-hacking detection | ✅ Statcheck (basic) | ✅ Multi-pattern |
-| Sample size validation | ❌ | ✅ |
-| Round p-value detection | ❌ | ✅ |
-| Figure duplicate detection | ❌ | ✅ Perceptual hash |
-| ELA editing artifacts | ❌ | ✅ |
-| Brightness forensics | ❌ | ✅ |
-| Unified risk score | ❌ | ✅ 0.0–1.0 |
-| REST API integration | ❌ | ✅ 3 endpoints live |
-| Methodology logic check | ❌ | 🔧 Coming |
-| Open source + extensible | ❌ | ✅ |
-
----
-
 ## System Architecture
-┌────────────────────────────────────────────────────┐
-│                    INPUT LAYER                     │
-│         Paper Text  /  PDF Upload  /  API          │
-└──────────────────────────┬─────────────────────────┘
-│
-┌──────────────────────────▼─────────────────────────┐
-│                  CORE PIPELINE                     │
-│                                                    │
-│  PDFParser ──────── Text Extraction                │
-│      │              Section splitting              │
-│      │              Figure extraction              │
-│      │                                             │
-│  StatAuditEngine ── p-value extraction             │
-│      │              p-hacking detection            │
-│      │              Sample size validation         │
-│      │              Round number detection         │
-│      │                                             │
-│  FigureForensics ── Perceptual hashing             │
-│                     Error Level Analysis           │
-│                     Brightness uniformity          │
-└──────────────────────────┬─────────────────────────┘
-│
-┌──────────────────────────▼─────────────────────────┐
-│                 INTELLIGENCE LAYER                 │
-│                                                    │
-│  Risk Scoring Engine                               │
-│  ├── Per-module weighted risk score (0.0–1.0)      │
-│  ├── Severity classification (low→critical)        │
-│  └── Natural language summary generation          │
-│                                                    │
-│  Flag Aggregator                                   │
-│  ├── flag_type + severity + description            │
-│  ├── evidence (exact values/text)                  │
-│  └── actionable suggestion for reviewer            │
-└──────────────────────────┬─────────────────────────┘
-│
-┌──────────────────────────▼─────────────────────────┐
-│                   OUTPUT LAYER                     │
-│                                                    │
-│  FastAPI REST API  ── OAS 3.1 interactive docs     │
-│  Structured JSON   ── Exportable integrity report  │
-│  (Coming) Web UI   ── Drag-drop paper analysis     │
-└────────────────────────────────────────────────────┘
+```
+┌──────────────────────────────────────────────────────┐
+│                     INPUT LAYER                      │
+│        Paper Text  /  PDF Upload  /  API Call        │
+└────────────────────────┬─────────────────────────────┘
+                         │
+┌────────────────────────▼─────────────────────────────┐
+│                  ANALYSIS PIPELINE                   │
+│                                                      │
+│  ┌─────────────────────────────────────────────┐     │
+│  │          Statistical Audit Engine           │     │
+│  │  regex extraction → pattern recognition     │     │
+│  │  → p-hack score + sample score + round      │     │
+│  │  → unified weighted risk score 0.0–1.0      │     │
+│  └─────────────────────────────────────────────┘     │
+│                                                      │
+│  ┌─────────────────────────────────────────────┐     │
+│  │         Figure Forensics Pipeline           │     │
+│  │  PDF → image extraction (PyMuPDF)           │     │
+│  │  → perceptual hash comparison               │     │
+│  │  → Error Level Analysis (ELA)               │     │
+│  │  → brightness uniformity scoring            │     │
+│  │  → forensic flags with evidence             │     │
+│  └─────────────────────────────────────────────┘     │
+│                                                      │
+│  [ Methodology Checker ]  [ Citation Analyzer ]      │
+│  [ Reproducibility   ]    [ Novelty Scorer    ]      │
+└────────────────────────┬─────────────────────────────┘
+                         │
+┌────────────────────────▼─────────────────────────────┐
+│                   OUTPUT LAYER                       │
+│   FastAPI REST API  ──  3 endpoints live, OAS 3.1    │
+│   Structured JSON   ──  flags + evidence + score     │
+│   Risk Reports      ──  severity-weighted analysis   │
+└──────────────────────────────────────────────────────┘
+```
+
 ---
 
 ## Quick Start
-
-### Prerequisites
-- Python 3.10+
-- Anaconda
-
-### Installation
 ```bash
 git clone https://github.com/Abu-Sameer-66/SciPeerAI.git
 cd SciPeerAI
 
 conda create -n scipeerai python=3.10 -y
 conda activate scipeerai
-
 pip install -r requirements.txt
-```
 
-### Run
-```bash
 python main.py
 ```
 
-API live at `http://localhost:8000`
-Interactive docs at `http://localhost:8000/docs`
+API live at → `http://localhost:8000`
+Interactive docs → `http://localhost:8000/docs`
 
 ---
 
 ## API Usage
 
-### Statistical Audit
+### Detect Statistical Fraud
 ```bash
 curl -X POST "http://localhost:8000/api/v1/analyze/statistics" \
   -H "Content-Type: application/json" \
   -d '{
-    "text": "We recruited n=12 participants. Results were significant (p=0.048). Secondary outcome also significant (p=0.049). Tertiary measure borderline significant (p=0.046)."
+    "text": "We recruited n=12 participants. The primary outcome showed significant improvement (p=0.048). Secondary measures were also significant (p=0.049). A tertiary analysis confirmed the pattern (p=0.046)."
   }'
 ```
-
-**Response:**
 ```json
 {
   "risk_level": "critical",
@@ -243,10 +176,10 @@ curl -X POST "http://localhost:8000/api/v1/analyze/statistics" \
 }
 ```
 
-### Figure Forensics
+### Analyze Paper Figures
 ```bash
 curl -X POST "http://localhost:8000/api/v1/analyze/figures" \
-  -F "file=@your_paper.pdf"
+  -F "file=@paper.pdf"
 ```
 
 ### System Status
@@ -256,90 +189,78 @@ curl http://localhost:8000/api/v1/status
 
 ---
 
-## Running Tests
+## Test Suite
 ```bash
-# Full test suite
 pytest tests/ -v
+```
+```
+tests/test_stat_audit.py::test_flags_suspicious_p_clustering      PASSED
+tests/test_stat_audit.py::test_clean_paper_passes                 PASSED
+tests/test_stat_audit.py::test_flags_tiny_sample                  PASSED
+tests/test_stat_audit.py::test_acceptable_sample_passes           PASSED
+tests/test_stat_audit.py::test_flags_exact_p_value                PASSED
+tests/test_stat_audit.py::test_result_is_correct_type             PASSED
+tests/test_stat_audit.py::test_empty_text_doesnt_crash            PASSED
+tests/test_figure_forensics.py::test_identical_images_flagged     PASSED
+tests/test_figure_forensics.py::test_different_images_not_flagged PASSED
+tests/test_figure_forensics.py::test_flat_image_high_uniformity   PASSED
+tests/test_figure_forensics.py::test_noisy_image_low_uniformity   PASSED
+tests/test_figure_forensics.py::test_ela_returns_float            PASSED
+tests/test_figure_forensics.py::test_no_figures_returns_clean     PASSED
 
-# Individual modules
-pytest tests/test_stat_audit.py -v
-pytest tests/test_figure_forensics.py -v
+13 passed in 3.07s
 ```
 
-**Current: 13 tests — all passing**
-tests/test_stat_audit.py::test_flags_suspicious_p_clustering     PASSED
-tests/test_stat_audit.py::test_clean_paper_passes                PASSED
-tests/test_stat_audit.py::test_flags_tiny_sample                 PASSED
-tests/test_stat_audit.py::test_acceptable_sample_passes          PASSED
-tests/test_stat_audit.py::test_flags_exact_p_value               PASSED
-tests/test_stat_audit.py::test_result_is_correct_type            PASSED
-tests/test_stat_audit.py::test_empty_text_doesnt_crash           PASSED
-tests/test_figure_forensics.py::test_identical_images_flagged    PASSED
-tests/test_figure_forensics.py::test_different_images_not_flagged PASSED
-tests/test_figure_forensics.py::test_flat_image_high_uniformity  PASSED
-tests/test_figure_forensics.py::test_noisy_image_low_uniformity  PASSED
-tests/test_figure_forensics.py::test_ela_returns_float           PASSED
-tests/test_figure_forensics.py::test_no_figures_returns_clean    PASSED
+---
+
+## Real-World Fraud This Catches
+
+| Case | Scale | Fraud Type | SciPeerAI Module |
+|:---|:---:|:---|:---|
+| Fujii Yoshitaka | 183 papers retracted | Duplicate gel figures recycled across papers | Figure Forensics |
+| Diederik Stapel | 58 papers retracted | Fabricated statistical results | Statistical Audit |
+| Hwang Woo-suk | Landmark stem cell fraud | Manipulated microscopy images | Figure Forensics |
+| LaCour political study | Major retraction | Fabricated survey data patterns | Statistical Audit |
+
 ---
 
 ## Project Structure
+```
 SciPeerAI/
 ├── src/
 │   └── scipeerai/
 │       ├── api/
-│       │   ├── init.py          FastAPI app factory
-│       │   └── routes.py            All API endpoints
+│       │   ├── __init__.py            FastAPI app factory
+│       │   └── routes.py              All API endpoints
 │       ├── modules/
-│       │   ├── stat_audit.py        Statistical integrity engine
-│       │   └── figure_forensics.py  CV-based figure analysis
+│       │   ├── stat_audit.py          Statistical fraud detection
+│       │   └── figure_forensics.py    CV-based forensic analysis
 │       └── core/
-│           └── pdf_parser.py        PDF ingestion pipeline
+│           └── pdf_parser.py          PDF ingestion pipeline
 ├── tests/
 │   ├── test_stat_audit.py
 │   └── test_figure_forensics.py
 ├── main.py
 └── requirements.txt
----
-
-## Real-World Fraud This Catches
-
-| Case | Fraud Type | SciPeerAI Module |
-|:---|:---|:---|
-| Fujii Yoshitaka — 183 papers retracted | Duplicate gel figures | Figure Forensics |
-| Diederik Stapel — psychology fabrication | Statistical anomalies | Statistical Audit |
-| Hwang Woo-suk — stem cell fraud | Image manipulation | Figure Forensics |
-| LaCour — political science fabrication | Fabricated data patterns | Statistical Audit |
-
----
-
-## Novel Technical Contributions
-
-**Statistical Audit Engine**
-Combined detection of p-hacking + underpowered sample sizes + suspiciously round p-values into a single unified weighted risk score. No existing tool (Statcheck, GRIM, SPRITE) combines all three dimensions simultaneously.
-
-**Figure Forensics Pipeline**
-Three-layer forensic analysis in one pipeline: perceptual hashing for duplicate detection + Error Level Analysis for JPEG editing artifacts + brightness uniformity scoring for artificial enhancement. No existing automated tool combines all three.
-
-**SciPeerBench (Coming)**
-A curated benchmark dataset of papers with known integrity issues — retracted, corrected, fraudulent — for evaluating AI review systems. The first benchmark of its kind designed explicitly for automated integrity detection research.
+```
 
 ---
 
 ## Roadmap
 
-- [x] Statistical Audit Engine — p-hacking, sample size, round numbers
-- [x] Figure Forensics Engine — duplicate detection, ELA, brightness
-- [x] Production REST API — FastAPI, OAS 3.1, file upload
+- [x] Statistical Audit Engine
+- [x] Figure Forensics Engine
+- [x] Production REST API — FastAPI + OAS 3.1
 - [x] 13 unit tests — all passing
 - [ ] Methodology Logic Checker — LLM-powered
 - [ ] Citation Integrity Analyzer — graph-based
 - [ ] Reproducibility Scanner
 - [ ] Novelty Scorer
 - [ ] SciPeerBench — evaluation benchmark dataset
-- [ ] Research paper — arXiv preprint
+- [ ] arXiv research paper
 - [ ] Web UI — drag and drop paper analysis
-- [ ] Cloud deployment — Railway / HuggingFace Spaces
-- [ ] Stripe integration — pay-per-analysis API
+- [ ] Cloud deployment
+- [ ] Stripe API monetization
 
 ---
 
@@ -347,14 +268,17 @@ A curated benchmark dataset of papers with known integrity issues — retracted,
 
 <div align="center">
 
-**Sameer Nadeem** — AI/ML Engineer · Data Scientist · GSoC 2026 Contributor
+**Sameer Nadeem** — AI/ML Engineer · Data Scientist · Open Source Contributor · GSoC 2026
 
 <br/>
 
-<a href="https://sameer-nadeem-portfolio.vercel.app"><img src="https://img.shields.io/badge/Portfolio-Live-00aaff?style=for-the-badge&labelColor=0d0d2b"/></a>
-<a href="https://github.com/Abu-Sameer-66"><img src="https://img.shields.io/badge/GitHub-Abu--Sameer--66-0077cc?style=for-the-badge&logo=github&labelColor=001a33"/></a>
-<a href="https://www.linkedin.com/in/sameer-nadeem-66339a357/"><img src="https://img.shields.io/badge/LinkedIn-Sameer%20Nadeem-00aaff?style=for-the-badge&logo=linkedin&labelColor=0d0d2b"/></a>
-<a href="https://www.kaggle.com/sameernadeem66"><img src="https://img.shields.io/badge/Kaggle-sameernadeem66-0077cc?style=for-the-badge&logo=kaggle&labelColor=001a33"/></a>
+<a href="https://sameer-nadeem-portfolio.vercel.app"><img src="https://img.shields.io/badge/Portfolio-Live-bb88ff?style=for-the-badge&labelColor=0a0020"/></a>
+&nbsp;
+<a href="https://github.com/Abu-Sameer-66"><img src="https://img.shields.io/badge/GitHub-Abu--Sameer--66-9955ff?style=for-the-badge&logo=github&labelColor=120038"/></a>
+&nbsp;
+<a href="https://www.linkedin.com/in/sameer-nadeem-66339a357/"><img src="https://img.shields.io/badge/LinkedIn-Sameer%20Nadeem-bb88ff?style=for-the-badge&logo=linkedin&labelColor=0a0020"/></a>
+&nbsp;
+<a href="https://www.kaggle.com/sameernadeem66"><img src="https://img.shields.io/badge/Kaggle-sameernadeem66-9955ff?style=for-the-badge&logo=kaggle&labelColor=120038"/></a>
 
 </div>
 
@@ -364,6 +288,8 @@ A curated benchmark dataset of papers with known integrity issues — retracted,
 
 *Built to make science trustworthy again.*
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0d0d2b,50:001a33,100:0a0a0a&height=120&section=footer" width="100%"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:1a0050,50:120038,100:000000&height=140&section=footer" width="100%"/>
+
+</div>" width="100%"/>
 
 </div>
