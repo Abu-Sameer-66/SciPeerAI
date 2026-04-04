@@ -90,7 +90,7 @@ class MethodologyChecker:
     def __init__(self):
         self._hf_token = os.getenv("HF_API_TOKEN", "")
         # free model on HuggingFace — good at reasoning
-        self._hf_model = "mistralai/Mistral-7B-Instruct-v0.1"
+        self._hf_model = "HuggingFaceH4/zephyr-7b-beta"
         self._hf_api_url = (
             f"https://api-inference.huggingface.co/models/{self._hf_model}"
         )

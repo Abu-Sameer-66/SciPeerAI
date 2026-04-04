@@ -13,14 +13,14 @@ from pydantic import BaseModel, Field
 from src.scipeerai.modules.stat_audit import StatAuditEngine
 from src.scipeerai.modules.figure_forensics import FigureForensicsEngine
 from src.scipeerai.modules.methodology_checker import MethodologyChecker
-
+from src.scipeerai.modules.citation_analyzer import CitationAnalyzer
 router = APIRouter(prefix="/api/v1", tags=["Analysis"])
 
 # initialize engines once — not on every request
 _stat_engine   = StatAuditEngine()
 _figure_engine = FigureForensicsEngine()
 _method_engine = MethodologyChecker()
-
+_citation_engine = CitationAnalyzer()
 # ── request / response models ─────────────────────────────────────────────────
 
 class TextAnalysisRequest(BaseModel):
@@ -241,6 +241,69 @@ def analyze_methodology(request: MethodologyRequest):
             methods_found=result.methods_found,
             llm_assessment=result.llm_assessment,
             llm_available=result.llm_available,
+            flags_count=len(result.flags),
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+class CitationRequest(BaseModel):
+    text: str = Field(..., min_length=50,
+                      description="Full paper text for citation analysis")
+    author_name: str = Field("",
+                             description="Primary author name for self-citation detection")
+
+
+class CitationFlagResponse(BaseModel):
+    flag_type: str
+    severity: str
+    description: str
+    evidence: str
+    suggestion: str
+
+
+class CitationResponse(BaseModel):
+    total_citations: int
+    self_citations: int
+    self_citation_ratio: float
+    unsupported_claims: int
+    risk_level: str
+    risk_score: float
+    summary: str
+    flags: list[CitationFlagResponse]
+    flags_count: int
+
+
+@router.post("/analyze/citations", response_model=CitationResponse)
+def analyze_citations(request: CitationRequest):
+    """
+    Analyze paper citations for integrity issues.
+
+    Detects: excessive self-citation, unsupported broad claims,
+    low citation density, et al. overuse.
+    Optionally checks author name for self-citation patterns.
+    """
+    try:
+        result = _citation_engine.analyze(
+            request.text, request.author_name
+        )
+        return CitationResponse(
+            total_citations=result.total_citations,
+            self_citations=result.self_citations,
+            self_citation_ratio=result.self_citation_ratio,
+            unsupported_claims=result.unsupported_claims,
+            risk_level=result.risk_level,
+            risk_score=result.risk_score,
+            summary=result.summary,
+            flags=[
+                CitationFlagResponse(
+                    flag_type=f.flag_type,
+                    severity=f.severity,
+                    description=f.description,
+                    evidence=f.evidence,
+                    suggestion=f.suggestion,
+                )
+                for f in result.flags
+            ],
             flags_count=len(result.flags),
         )
     except Exception as e:
