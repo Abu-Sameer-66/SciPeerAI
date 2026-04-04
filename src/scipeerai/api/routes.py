@@ -80,11 +80,11 @@ def system_status():
         "modules_ready": {
             "stat_audit":          True,
             "figure_forensics":    True,
-            "methodology_checker": False,
-            "citation_analyzer":   False,
+            "methodology_checker": True,
+            "citation_analyzer":   True,
             "reproducibility":     False,
             "novelty_scorer":      False,
-        },
+            },
         "version": "0.1.0",
     }
 
