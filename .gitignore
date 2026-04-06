@@ -20,3 +20,7 @@ data/sample_papers/*.pdf
 # OS
 .DS_Store
 Thumbs.db
+# UI folder
+ui/node_modules/
+ui/.next/
+ui/.env.local
