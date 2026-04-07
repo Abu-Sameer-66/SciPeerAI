@@ -4,39 +4,40 @@
 
 <br/>
 
-<img src="https://readme-typing-svg.herokuapp.com?font=JetBrains+Mono&weight=700&size=24&pause=1000&color=BB88FF&center=true&vCenter=true&width=900&lines=Statistical+Fraud+Detection+Engine;Figure+Forensics+%2B+ELA+Analysis;Methodology+Logic+%2B+Citation+Integrity;27+Tests+Passing+%7C+Live+on+Railway" />
+<img src="https://readme-typing-svg.herokuapp.com?font=JetBrains+Mono&weight=700&size=24&pause=1000&color=BB88FF&center=true&vCenter=true&width=900&lines=Statistical+Fraud+Detection+Engine;Figure+Forensics+%2B+ELA+Analysis;Methodology+Logic+%2B+Citation+Integrity;27+Tests+%7C+Live+API+%7C+Live+Web+UI" />
 
 <br/><br/>
 
-<a href="https://web-production-f526d.up.railway.app/docs">
-<img src="https://img.shields.io/badge/%F0%9F%9F%A2%20LIVE%20API-Railway-bb88ff?style=for-the-badge&labelColor=0a0020"/>
+<a href="https://scipeerai-ui.vercel.app">
+<img src="https://img.shields.io/badge/%F0%9F%9F%A2%20LIVE%20WEB%20UI-Vercel-bb88ff?style=for-the-badge&labelColor=0a0020"/>
 </a>
 &nbsp;
-<a href="https://web-production-f526d.up.railway.app">
-<img src="https://img.shields.io/badge/%F0%9F%9F%A2%20LIVE%20DEMO-Online-9955ff?style=for-the-badge&labelColor=120038"/>
+<a href="https://web-production-f526d.up.railway.app/docs">
+<img src="https://img.shields.io/badge/%F0%9F%9F%A2%20LIVE%20API-Railway-9955ff?style=for-the-badge&labelColor=120038"/>
 </a>
 &nbsp;
 <a href="https://github.com/Abu-Sameer-66/SciPeerAI">
 <img src="https://img.shields.io/badge/%F0%9F%9F%A3%20REPO-GitHub-bb88ff?style=for-the-badge&labelColor=0a0020"/>
 </a>
 &nbsp;
-<a href="https://sameer-nadeem-portfolio.vercel.app">
-<img src="https://img.shields.io/badge/%F0%9F%8C%90%20PORTFOLIO-Live-9955ff?style=for-the-badge&labelColor=120038"/>
+<a href="https://github.com/Abu-Sameer-66/SciPeerAI-UI">
+<img src="https://img.shields.io/badge/%F0%9F%96%A5%20UI%20REPO-GitHub-9955ff?style=for-the-badge&labelColor=120038"/>
 </a>
 &nbsp;
-<a href="https://github.com/Abu-Sameer-66/SciPeerAI/blob/main/LICENSE">
-<img src="https://img.shields.io/badge/License-MIT-bb88ff?style=for-the-badge&labelColor=0a0020"/>
+<a href="https://sameer-nadeem-portfolio.vercel.app">
+<img src="https://img.shields.io/badge/%F0%9F%8C%90%20PORTFOLIO-Live-bb88ff?style=for-the-badge&labelColor=0a0020"/>
 </a>
 
 <br/><br/>
 
 <img src="https://img.shields.io/badge/Python-3.10-bb88ff?style=flat-square&logo=python&logoColor=black&labelColor=0a0020"/>
 <img src="https://img.shields.io/badge/FastAPI-0.115-9955ff?style=flat-square&logo=fastapi&logoColor=white&labelColor=120038"/>
-<img src="https://img.shields.io/badge/PyMuPDF-PDF%20Engine-bb88ff?style=flat-square&labelColor=0a0020"/>
-<img src="https://img.shields.io/badge/Pillow-Image%20Analysis-9955ff?style=flat-square&labelColor=120038"/>
+<img src="https://img.shields.io/badge/Next.js-15-bb88ff?style=flat-square&logo=nextdotjs&logoColor=white&labelColor=0a0020"/>
+<img src="https://img.shields.io/badge/PyMuPDF-PDF%20Engine-9955ff?style=flat-square&labelColor=120038"/>
 <img src="https://img.shields.io/badge/imagehash-Perceptual%20Hash-bb88ff?style=flat-square&labelColor=0a0020"/>
 <img src="https://img.shields.io/badge/pytest-27%20Tests-9955ff?style=flat-square&logo=pytest&logoColor=white&labelColor=120038"/>
-<img src="https://img.shields.io/badge/Railway-Deployed-bb88ff?style=flat-square&logo=railway&logoColor=white&labelColor=0a0020"/>
+<img src="https://img.shields.io/badge/Railway-API%20Live-bb88ff?style=flat-square&logo=railway&logoColor=white&labelColor=0a0020"/>
+<img src="https://img.shields.io/badge/Vercel-UI%20Live-9955ff?style=flat-square&logo=vercel&logoColor=white&labelColor=120038"/>
 
 </div>
 
@@ -60,6 +61,7 @@ Reviewers are overworked. They check one paper at a time. They cannot cross-refe
 
 | Service | URL | Status |
 |:---|:---|:---:|
+| Web UI | [scipeerai-ui.vercel.app](https://scipeerai-ui.vercel.app) | 🟢 Live |
 | REST API | [web-production-f526d.up.railway.app](https://web-production-f526d.up.railway.app) | 🟢 Live |
 | API Docs | [/docs](https://web-production-f526d.up.railway.app/docs) | 🟢 Live |
 | System Status | [/api/v1/status](https://web-production-f526d.up.railway.app/api/v1/status) | 🟢 Live |
@@ -105,7 +107,7 @@ Detects self-citation abuse, unsupported broad claims, low citation density, and
 ```
 ┌──────────────────────────────────────────────────────┐
 │                     INPUT LAYER                      │
-│        Paper Text  /  PDF Upload  /  API Call        │
+│     Web UI (Vercel)  /  API Call  /  PDF Upload      │
 └────────────────────────┬─────────────────────────────┘
                          │
 ┌────────────────────────▼─────────────────────────────┐
@@ -139,8 +141,8 @@ Detects self-citation abuse, unsupported broad claims, low citation density, and
 ┌────────────────────────▼─────────────────────────────┐
 │                   OUTPUT LAYER                       │
 │   FastAPI REST API  ──  5 endpoints, OAS 3.1         │
-│   Structured JSON   ──  flags + evidence + score     │
-│   Railway Cloud     ──  24/7 globally accessible     │
+│   Next.js Web UI   ──  Vercel, globally accessible   │
+│   Structured JSON  ──  flags + evidence + score      │
 └──────────────────────────────────────────────────────┘
 ```
 
@@ -158,7 +160,7 @@ python main.py
 
 Local API → `http://localhost:8000`
 Live API → `https://web-production-f526d.up.railway.app`
-Docs → `https://web-production-f526d.up.railway.app/docs`
+Live UI → `https://scipeerai-ui.vercel.app`
 
 ---
 
@@ -207,7 +209,7 @@ curl -X POST "https://web-production-f526d.up.railway.app/api/v1/analyze/methodo
 ```bash
 curl -X POST "https://web-production-f526d.up.railway.app/api/v1/analyze/citations" \
   -H "Content-Type: application/json" \
-  -d '{"text": "Studies show that X. It is well known that Y. Research shows Z.", "author_name": ""}'
+  -d '{"text": "Studies show that X. It is well known that Y.", "author_name": ""}'
 ```
 
 ---
@@ -217,34 +219,6 @@ curl -X POST "https://web-production-f526d.up.railway.app/api/v1/analyze/citatio
 pytest tests/ -v
 ```
 ```
-tests/test_citation_analyzer.py::test_extracts_bracketed_citations      PASSED
-tests/test_citation_analyzer.py::test_extracts_author_year_citations    PASSED
-tests/test_citation_analyzer.py::test_flags_excessive_self_citation     PASSED
-tests/test_citation_analyzer.py::test_flags_unsupported_claims          PASSED
-tests/test_citation_analyzer.py::test_cited_claims_not_flagged          PASSED
-tests/test_citation_analyzer.py::test_result_structure                  PASSED
-tests/test_citation_analyzer.py::test_empty_text_safe                   PASSED
-tests/test_figure_forensics.py::test_identical_images_flagged           PASSED
-tests/test_figure_forensics.py::test_different_images_not_flagged       PASSED
-tests/test_figure_forensics.py::test_flat_image_high_uniformity         PASSED
-tests/test_figure_forensics.py::test_noisy_image_low_uniformity         PASSED
-tests/test_figure_forensics.py::test_ela_returns_float                  PASSED
-tests/test_figure_forensics.py::test_no_figures_returns_clean           PASSED
-tests/test_methodology_checker.py::test_flags_causation_without_rct     PASSED
-tests/test_methodology_checker.py::test_rct_does_not_flag_causation     PASSED
-tests/test_methodology_checker.py::test_flags_missing_control_group     PASSED
-tests/test_methodology_checker.py::test_no_flag_when_control_present    PASSED
-tests/test_methodology_checker.py::test_flags_timeframe_mismatch        PASSED
-tests/test_methodology_checker.py::test_result_structure                PASSED
-tests/test_methodology_checker.py::test_empty_text_safe                 PASSED
-tests/test_stat_audit.py::test_flags_suspicious_p_clustering            PASSED
-tests/test_stat_audit.py::test_clean_paper_passes                       PASSED
-tests/test_stat_audit.py::test_flags_tiny_sample                        PASSED
-tests/test_stat_audit.py::test_acceptable_sample_passes                 PASSED
-tests/test_stat_audit.py::test_flags_exact_p_value                      PASSED
-tests/test_stat_audit.py::test_result_is_correct_type                   PASSED
-tests/test_stat_audit.py::test_empty_text_doesnt_crash                  PASSED
-
 27 passed in 10.95s
 ```
 
@@ -282,6 +256,7 @@ SciPeerAI/
 │   ├── test_figure_forensics.py
 │   ├── test_methodology_checker.py
 │   └── test_citation_analyzer.py
+├── ui/                                  Web UI (Next.js)
 ├── main.py
 ├── Procfile
 ├── railway.json
@@ -292,18 +267,19 @@ SciPeerAI/
 
 ## Roadmap
 
-- [x] Statistical Audit Engine — p-hacking, sample size, round numbers
-- [x] Figure Forensics Engine — duplicate detection, ELA, brightness
-- [x] Methodology Logic Checker — causation, control group, timeframe
-- [x] Citation Integrity Analyzer — self-citation, unsupported claims
-- [x] Production REST API — FastAPI + OAS 3.1 — 5 endpoints
+- [x] Statistical Audit Engine
+- [x] Figure Forensics Engine
+- [x] Methodology Logic Checker
+- [x] Citation Integrity Analyzer
+- [x] Production REST API — 5 endpoints
 - [x] 27 unit tests — all passing
-- [x] Live deployment — Railway cloud
+- [x] Railway API deployment
+- [x] Next.js Web UI
+- [x] Vercel UI deployment
 - [ ] Reproducibility Scanner
 - [ ] Novelty Scorer
-- [ ] SciPeerBench — evaluation benchmark dataset
+- [ ] SciPeerBench benchmark dataset
 - [ ] arXiv research paper
-- [ ] Web UI — drag and drop
 - [ ] Stripe API monetization
 
 ---
