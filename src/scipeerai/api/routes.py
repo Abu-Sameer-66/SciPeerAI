@@ -9,7 +9,7 @@ import os
 import tempfile
 from fastapi import APIRouter, HTTPException, UploadFile, File
 from pydantic import BaseModel, Field
-
+from src.scipeerai.modules.reproducibility_scanner import ReproducibilityScanner
 from src.scipeerai.modules.stat_audit import StatAuditEngine
 from src.scipeerai.modules.figure_forensics import FigureForensicsEngine
 from src.scipeerai.modules.methodology_checker import MethodologyChecker
@@ -82,7 +82,7 @@ def system_status():
             "figure_forensics":    True,
             "methodology_checker": True,
             "citation_analyzer":   True,
-            "reproducibility":     False,
+            "reproducibility":     True,
             "novelty_scorer":      False,
             },
         "version": "0.1.0",
@@ -296,6 +296,68 @@ def analyze_citations(request: CitationRequest):
             summary=result.summary,
             flags=[
                 CitationFlagResponse(
+                    flag_type=f.flag_type,
+                    severity=f.severity,
+                    description=f.description,
+                    evidence=f.evidence,
+                    suggestion=f.suggestion,
+                )
+                for f in result.flags
+            ],
+            flags_count=len(result.flags),
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+    
+class ReproducibilityRequest(BaseModel):
+    text: str = Field(..., min_length=50,
+                      description="Full paper text for reproducibility analysis")
+
+
+class ReproducibilityFlagResponse(BaseModel):
+    flag_type: str
+    severity: str
+    description: str
+    evidence: str
+    suggestion: str
+
+
+class ReproducibilityResponse(BaseModel):
+    has_code_link: bool
+    has_data_link: bool
+    has_software_versions: bool
+    has_preregistration: bool
+    has_ethics_statement: bool
+    reproducibility_score: float
+    risk_level: str
+    summary: str
+    flags: list[ReproducibilityFlagResponse]
+    flags_count: int
+
+
+@router.post("/analyze/reproducibility", response_model=ReproducibilityResponse)
+def analyze_reproducibility(request: ReproducibilityRequest):
+    """
+    Scan paper for reproducibility indicators.
+
+    Checks: code availability, data availability,
+    software versions, preregistration, ethics statements.
+    Returns a reproducibility score (0-1) and missing items.
+    """
+    try:
+        result = _repro_engine.analyze(request.text)
+        return ReproducibilityResponse(
+            has_code_link=result.has_code_link,
+            has_data_link=result.has_data_link,
+            has_software_versions=result.has_software_versions,
+            has_preregistration=result.has_preregistration,
+            has_ethics_statement=result.has_ethics_statement,
+            reproducibility_score=result.reproducibility_score,
+            risk_level=result.risk_level,
+            summary=result.summary,
+            flags=[
+                ReproducibilityFlagResponse(
                     flag_type=f.flag_type,
                     severity=f.severity,
                     description=f.description,
