@@ -14,6 +14,7 @@ from src.scipeerai.modules.stat_audit import StatAuditEngine
 from src.scipeerai.modules.figure_forensics import FigureForensicsEngine
 from src.scipeerai.modules.methodology_checker import MethodologyChecker
 from src.scipeerai.modules.citation_analyzer import CitationAnalyzer
+from src.scipeerai.modules.novelty_scorer import NoveltyScorer
 router = APIRouter(prefix="/api/v1", tags=["Analysis"])
 
 # initialize engines once — not on every request
@@ -83,7 +84,7 @@ def system_status():
             "methodology_checker": True,
             "citation_analyzer":   True,
             "reproducibility":     True,
-            "novelty_scorer":      False,
+            "novelty_scorer":      True,
             },
         "version": "0.1.0",
     }
@@ -366,6 +367,83 @@ def analyze_reproducibility(request: ReproducibilityRequest):
                 )
                 for f in result.flags
             ],
+            flags_count=len(result.flags),
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+    
+_novelty_engine = NoveltyScorer()
+class NoveltyRequest(BaseModel):
+    text: str = Field(..., min_length=50,
+                      description="Full paper text for novelty analysis")
+    title: str = Field("", description="Paper title for better search accuracy")
+
+
+class NoveltyFlagResponse(BaseModel):
+    flag_type: str
+    severity: str
+    description: str
+    evidence: str
+    suggestion: str
+
+
+class RelatedWorkResponse(BaseModel):
+    title: str
+    year: int
+    authors: list
+    similarity_signal: str
+
+
+class NoveltyResponse(BaseModel):
+    novelty_score: float
+    novelty_level: str
+    risk_level: str
+    summary: str
+    flags: list[NoveltyFlagResponse]
+    related_works_found: list[RelatedWorkResponse]
+    key_terms_extracted: list[str]
+    literature_accessible: bool
+    flags_count: int
+
+
+@router.post("/analyze/novelty", response_model=NoveltyResponse)
+def analyze_novelty(request: NoveltyRequest):
+    """
+    Estimate paper novelty against existing literature.
+
+    Uses structural language analysis + Semantic Scholar API
+    to estimate how novel the contribution is.
+    Returns novelty score 0.0 (not novel) to 1.0 (highly novel).
+    """
+    try:
+        result = _novelty_engine.analyze(request.text, request.title)
+        return NoveltyResponse(
+            novelty_score=result.novelty_score,
+            novelty_level=result.novelty_level,
+            risk_level=result.risk_level,
+            summary=result.summary,
+            flags=[
+                NoveltyFlagResponse(
+                    flag_type=f.flag_type,
+                    severity=f.severity,
+                    description=f.description,
+                    evidence=f.evidence,
+                    suggestion=f.suggestion,
+                )
+                for f in result.flags
+            ],
+            related_works_found=[
+                RelatedWorkResponse(
+                    title=w.title,
+                    year=w.year,
+                    authors=w.authors,
+                    similarity_signal=w.similarity_signal,
+                )
+                for w in result.related_works_found
+            ],
+            key_terms_extracted=result.key_terms_extracted,
+            literature_accessible=result.literature_accessible,
             flags_count=len(result.flags),
         )
     except Exception as e:
