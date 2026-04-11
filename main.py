@@ -1,8 +1,14 @@
-# SciPeerAI — Scientific Integrity Analysis System
-
 from src.scipeerai.api import create_app
+from fastapi.middleware.cors import CORSMiddleware
 
 app = create_app()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 if __name__ == "__main__":
     import uvicorn
