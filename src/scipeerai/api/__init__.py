@@ -1,6 +1,5 @@
-# src/scipeerai/api/__init__.py
-
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from src.scipeerai.api.routes import router
 
 
@@ -14,7 +13,14 @@ def create_app() -> FastAPI:
         version="0.1.0",
     )
 
-    # register all routes from routes.py
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
     app.include_router(router)
 
     @app.get("/", tags=["System"])
