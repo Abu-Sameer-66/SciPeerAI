@@ -22,6 +22,8 @@ _stat_engine   = StatAuditEngine()
 _figure_engine = FigureForensicsEngine()
 _method_engine = MethodologyChecker()
 _citation_engine = CitationAnalyzer()
+_repro_engine    = ReproducibilityScanner()
+_novelty_engine  = NoveltyScorer()
 # ── request / response models ─────────────────────────────────────────────────
 
 class TextAnalysisRequest(BaseModel):
