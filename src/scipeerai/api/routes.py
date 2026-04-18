@@ -21,8 +21,6 @@ _repro_engine    = ReproducibilityScanner()
 _novelty_engine  = NoveltyScorer()
 _grim_engine     = GrimTest()
 
-# ── request / response models ─────────────────────────────────────────────────
-
 class TextAnalysisRequest(BaseModel):
     text: str = Field(..., min_length=50, description="Paper text to analyze")
 
@@ -78,15 +76,15 @@ class CitationFlagResponse(BaseModel):
     suggestion:  str = ""
 
 class CitationResponse(BaseModel):
-    total_citations:    int
-    self_citations:     int
+    total_citations:     int
+    self_citations:      int
     self_citation_ratio: float
-    unsupported_claims: int
-    flags:              list[CitationFlagResponse]
-    risk_level:         str
-    risk_score:         float
-    summary:            str
-    flags_count:        int
+    unsupported_claims:  int
+    flags:               list[CitationFlagResponse]
+    risk_level:          str
+    risk_score:          float
+    summary:             str
+    flags_count:         int
 
 class ReproducibilityRequest(BaseModel):
     text: str = Field(..., min_length=50)
@@ -99,16 +97,16 @@ class ReproducibilityFlagResponse(BaseModel):
     suggestion:  str = ""
 
 class ReproducibilityResponse(BaseModel):
-    has_code_link:          bool
-    has_data_link:          bool
-    has_software_versions:  bool
-    has_preregistration:    bool
-    has_ethics_statement:   bool
-    reproducibility_score:  float
-    risk_level:             str
-    summary:                str
-    flags:                  list[ReproducibilityFlagResponse]
-    flags_count:            int
+    has_code_link:         bool
+    has_data_link:         bool
+    has_software_versions: bool
+    has_preregistration:   bool
+    has_ethics_statement:  bool
+    reproducibility_score: float
+    risk_level:            str
+    summary:               str
+    flags:                 list[ReproducibilityFlagResponse]
+    flags_count:           int
 
 class NoveltyRequest(BaseModel):
     text:  str = Field(..., min_length=50)
@@ -122,9 +120,9 @@ class NoveltyFlagResponse(BaseModel):
     suggestion:  str = ""
 
 class RelatedWorkResponse(BaseModel):
-    title:            str
-    year:             int
-    authors:          list
+    title:             str
+    year:              int
+    authors:           list
     similarity_signal: str
 
 class NoveltyResponse(BaseModel):
@@ -307,11 +305,12 @@ def analyze_novelty(request: NoveltyRequest):
     """Estimate paper novelty against existing literature."""
     try:
         result = _novelty_engine.analyze(request.text, request.title)
+        raw_flags = getattr(result, 'flags', []) or []
         return NoveltyResponse(
             novelty_score=result.novelty_score,
             novelty_level=result.novelty_level,
             risk_level=result.risk_level,
-            risk_score=result.risk_score,
+            risk_score=getattr(result, 'risk_score', result.novelty_score),
             summary=result.summary,
             flags=[
                 NoveltyFlagResponse(
@@ -320,7 +319,7 @@ def analyze_novelty(request: NoveltyRequest):
                     description=f.description,
                     evidence=f.evidence,
                     suggestion=getattr(f, 'suggestion', ''),
-                ) for f in result.flags
+                ) for f in raw_flags
             ],
             related_works_found=[
                 RelatedWorkResponse(
@@ -332,7 +331,7 @@ def analyze_novelty(request: NoveltyRequest):
             ],
             key_terms_extracted=result.key_terms_extracted,
             literature_accessible=result.literature_accessible,
-            flags_count=len(result.flags),
+            flags_count=len(raw_flags),
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
