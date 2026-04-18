@@ -11,6 +11,7 @@ from src.scipeerai.modules.citation_analyzer import CitationAnalyzer
 from src.scipeerai.modules.novelty_scorer import NoveltyScorer
 from src.scipeerai.modules.grim_test import GrimTest
 from src.scipeerai.modules.sprite_test import SpriteTest
+from src.scipeerai.modules.granularity_analyzer import GranularityAnalyzer
 
 router = APIRouter(prefix="/api/v1", tags=["Analysis"])
 
@@ -21,7 +22,8 @@ _citation_engine = CitationAnalyzer()
 _repro_engine    = ReproducibilityScanner()
 _novelty_engine  = NoveltyScorer()
 _grim_engine     = GrimTest()
-_sprite_engine   = SpriteTest()
+_sprite_engine      = SpriteTest()
+_granularity_engine = GranularityAnalyzer()
 
 class TextAnalysisRequest(BaseModel):
     text: str = Field(..., min_length=50, description="Paper text to analyze")
@@ -394,6 +396,53 @@ def analyze_sprite(request: SpriteRequest):
             summary                 = result.summary,
             flags                   = [
                 SpriteFlagResponse(
+                    flag_type   = f.flag_type,
+                    severity    = f.severity,
+                    description = f.description,
+                    evidence    = f.evidence,
+                    suggestion  = f.suggestion,
+                )
+                for f in result.flags
+            ],
+            flags_count = result.flags_count,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+class GranularityRequest(BaseModel):
+    text: str = Field(..., min_length=50)
+
+class GranularityFlagResponse(BaseModel):
+    flag_type:   str
+    severity:    str
+    description: str
+    evidence:    str
+    suggestion:  str
+
+class GranularityResponse(BaseModel):
+    digit_preference_score: float
+    benford_score:          float
+    round_number_ratio:     float
+    granularity_score:      float
+    risk_level:             str
+    summary:                str
+    flags:                  list[GranularityFlagResponse]
+    flags_count:            int
+
+@router.post('/analyze/granularity', response_model=GranularityResponse)
+def analyze_granularity(request: GranularityRequest):
+    try:
+        result = _granularity_engine.analyze(request.text)
+        return GranularityResponse(
+            digit_preference_score = result.digit_preference_score,
+            benford_score          = result.benford_score,
+            round_number_ratio     = result.round_number_ratio,
+            granularity_score      = result.granularity_score,
+            risk_level             = result.risk_level,
+            summary                = result.summary,
+            flags                  = [
+                GranularityFlagResponse(
                     flag_type   = f.flag_type,
                     severity    = f.severity,
                     description = f.description,
