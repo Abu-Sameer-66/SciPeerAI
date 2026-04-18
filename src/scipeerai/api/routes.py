@@ -10,6 +10,7 @@ from src.scipeerai.modules.methodology_checker import MethodologyChecker
 from src.scipeerai.modules.citation_analyzer import CitationAnalyzer
 from src.scipeerai.modules.novelty_scorer import NoveltyScorer
 from src.scipeerai.modules.grim_test import GrimTest
+from src.scipeerai.modules.sprite_test import SpriteTest
 
 router = APIRouter(prefix="/api/v1", tags=["Analysis"])
 
@@ -20,6 +21,7 @@ _citation_engine = CitationAnalyzer()
 _repro_engine    = ReproducibilityScanner()
 _novelty_engine  = NoveltyScorer()
 _grim_engine     = GrimTest()
+_sprite_engine   = SpriteTest()
 
 class TextAnalysisRequest(BaseModel):
     text: str = Field(..., min_length=50, description="Paper text to analyze")
@@ -357,6 +359,50 @@ def analyze_grim(request: GrimRequest):
                 ) for f in result.flags
             ],
             flags_count=result.flags_count,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+class SpriteRequest(BaseModel):
+    text: str = Field(..., min_length=50)
+
+class SpriteFlagResponse(BaseModel):
+    flag_type:   str
+    severity:    str
+    description: str
+    evidence:    str
+    suggestion:  str
+
+class SpriteResponse(BaseModel):
+    impossible_combinations: list
+    possible_combinations:   list
+    sprite_score:            float
+    risk_level:              str
+    summary:                 str
+    flags:                   list[SpriteFlagResponse]
+    flags_count:             int
+
+@router.post('/analyze/sprite', response_model=SpriteResponse)
+def analyze_sprite(request: SpriteRequest):
+    try:
+        result = _sprite_engine.analyze(request.text)
+        return SpriteResponse(
+            impossible_combinations = result.impossible_combinations,
+            possible_combinations   = result.possible_combinations,
+            sprite_score            = result.sprite_score,
+            risk_level              = result.risk_level,
+            summary                 = result.summary,
+            flags                   = [
+                SpriteFlagResponse(
+                    flag_type   = f.flag_type,
+                    severity    = f.severity,
+                    description = f.description,
+                    evidence    = f.evidence,
+                    suggestion  = f.suggestion,
+                )
+                for f in result.flags
+            ],
+            flags_count = result.flags_count,
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
