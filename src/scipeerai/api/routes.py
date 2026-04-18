@@ -12,6 +12,7 @@ from src.scipeerai.modules.novelty_scorer import NoveltyScorer
 from src.scipeerai.modules.grim_test import GrimTest
 from src.scipeerai.modules.sprite_test import SpriteTest
 from src.scipeerai.modules.granularity_analyzer import GranularityAnalyzer
+from src.scipeerai.modules.pcurve_analyzer import PCurveAnalyzer
 
 router = APIRouter(prefix="/api/v1", tags=["Analysis"])
 
@@ -24,6 +25,7 @@ _novelty_engine  = NoveltyScorer()
 _grim_engine     = GrimTest()
 _sprite_engine      = SpriteTest()
 _granularity_engine = GranularityAnalyzer()
+_pcurve_engine      = PCurveAnalyzer()
 
 class TextAnalysisRequest(BaseModel):
     text: str = Field(..., min_length=50, description="Paper text to analyze")
@@ -443,6 +445,55 @@ def analyze_granularity(request: GranularityRequest):
             summary                = result.summary,
             flags                  = [
                 GranularityFlagResponse(
+                    flag_type   = f.flag_type,
+                    severity    = f.severity,
+                    description = f.description,
+                    evidence    = f.evidence,
+                    suggestion  = f.suggestion,
+                )
+                for f in result.flags
+            ],
+            flags_count = result.flags_count,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+class PCurveRequest(BaseModel):
+    text: str = Field(..., min_length=50)
+
+class PCurveFlagResponse(BaseModel):
+    flag_type:   str
+    severity:    str
+    description: str
+    evidence:    str
+    suggestion:  str
+
+class PCurveResponse(BaseModel):
+    p_values_found:   list
+    significant_p:    list
+    right_skew_ratio: float
+    clustering_score: float
+    pcurve_score:     float
+    risk_level:       str
+    summary:          str
+    flags:            list[PCurveFlagResponse]
+    flags_count:      int
+
+@router.post('/analyze/pcurve', response_model=PCurveResponse)
+def analyze_pcurve(request: PCurveRequest):
+    try:
+        result = _pcurve_engine.analyze(request.text)
+        return PCurveResponse(
+            p_values_found   = result.p_values_found,
+            significant_p    = result.significant_p,
+            right_skew_ratio = result.right_skew_ratio,
+            clustering_score = result.clustering_score,
+            pcurve_score     = result.pcurve_score,
+            risk_level       = result.risk_level,
+            summary          = result.summary,
+            flags            = [
+                PCurveFlagResponse(
                     flag_type   = f.flag_type,
                     severity    = f.severity,
                     description = f.description,
