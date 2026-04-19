@@ -13,6 +13,7 @@ from src.scipeerai.modules.grim_test import GrimTest
 from src.scipeerai.modules.sprite_test import SpriteTest
 from src.scipeerai.modules.granularity_analyzer import GranularityAnalyzer
 from src.scipeerai.modules.pcurve_analyzer import PCurveAnalyzer
+from src.scipeerai.modules.effect_size_validator import EffectSizeValidator
 
 router = APIRouter(prefix="/api/v1", tags=["Analysis"])
 
@@ -39,7 +40,8 @@ _novelty_engine     = NoveltyScorer()
 _grim_engine        = GrimTest()
 _sprite_engine      = SpriteTest()
 _granularity_engine = GranularityAnalyzer()
-_pcurve_engine      = PCurveAnalyzer()
+_pcurve_engine         = PCurveAnalyzer()
+_effect_size_engine    = EffectSizeValidator()
 
 # ── Request / Response Models ─────────────────────────────────────────────────
 
@@ -526,6 +528,54 @@ def analyze_pcurve(request: PCurveRequest):
                 ) for f in result.flags
             ],
             flags_count=result.flags_count,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+class EffectSizeRequest(BaseModel):
+    text: str = Field(..., min_length=50)
+
+class EffectSizeFlagResponse(BaseModel):
+    flag_type:   str
+    severity:    str
+    description: str
+    evidence:    str
+    suggestion:  str
+
+class EffectSizeResponse(BaseModel):
+    effect_sizes_found: list
+    power_estimates:    list
+    inflated_effects:   list
+    underpowered:       list
+    effect_score:       float
+    risk_level:         str
+    summary:            str
+    flags:              list[EffectSizeFlagResponse]
+    flags_count:        int
+
+@router.post('/analyze/effect_size', response_model=EffectSizeResponse)
+def analyze_effect_size(request: EffectSizeRequest):
+    try:
+        result = _effect_size_engine.analyze(_truncate(request.text))
+        return EffectSizeResponse(
+            effect_sizes_found = result.effect_sizes_found,
+            power_estimates    = result.power_estimates,
+            inflated_effects   = result.inflated_effects,
+            underpowered       = result.underpowered,
+            effect_score       = result.effect_score,
+            risk_level         = result.risk_level,
+            summary            = result.summary,
+            flags              = [
+                EffectSizeFlagResponse(
+                    flag_type   = f.flag_type,
+                    severity    = f.severity,
+                    description = f.description,
+                    evidence    = f.evidence,
+                    suggestion  = f.suggestion,
+                )
+                for f in result.flags
+            ],
+            flags_count = result.flags_count,
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
