@@ -14,6 +14,7 @@ from src.scipeerai.modules.sprite_test import SpriteTest
 from src.scipeerai.modules.granularity_analyzer import GranularityAnalyzer
 from src.scipeerai.modules.pcurve_analyzer import PCurveAnalyzer
 from src.scipeerai.modules.effect_size_validator import EffectSizeValidator
+from src.scipeerai.modules.retraction_checker import RetractionChecker
 
 router = APIRouter(prefix="/api/v1", tags=["Analysis"])
 
@@ -42,6 +43,7 @@ _sprite_engine      = SpriteTest()
 _granularity_engine = GranularityAnalyzer()
 _pcurve_engine         = PCurveAnalyzer()
 _effect_size_engine    = EffectSizeValidator()
+_retraction_engine     = RetractionChecker()
 
 # ── Request / Response Models ─────────────────────────────────────────────────
 
@@ -567,6 +569,53 @@ def analyze_effect_size(request: EffectSizeRequest):
             summary            = result.summary,
             flags              = [
                 EffectSizeFlagResponse(
+                    flag_type   = f.flag_type,
+                    severity    = f.severity,
+                    description = f.description,
+                    evidence    = f.evidence,
+                    suggestion  = f.suggestion,
+                )
+                for f in result.flags
+            ],
+            flags_count = result.flags_count,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+class RetractionRequest(BaseModel):
+    text: str = Field(..., min_length=50)
+
+class RetractionFlagResponse(BaseModel):
+    flag_type:   str
+    severity:    str
+    description: str
+    evidence:    str
+    suggestion:  str
+
+class RetractionResponse(BaseModel):
+    dois_found:       list
+    retracted_found:  list
+    checked_count:    int
+    retraction_score: float
+    risk_level:       str
+    summary:          str
+    flags:            list[RetractionFlagResponse]
+    flags_count:      int
+
+@router.post('/analyze/retraction', response_model=RetractionResponse)
+def analyze_retraction(request: RetractionRequest):
+    try:
+        result = _retraction_engine.analyze(_truncate(request.text))
+        return RetractionResponse(
+            dois_found       = result.dois_found,
+            retracted_found  = result.retracted_found,
+            checked_count    = result.checked_count,
+            retraction_score = result.retraction_score,
+            risk_level       = result.risk_level,
+            summary          = result.summary,
+            flags            = [
+                RetractionFlagResponse(
                     flag_type   = f.flag_type,
                     severity    = f.severity,
                     description = f.description,
