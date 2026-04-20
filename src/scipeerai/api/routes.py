@@ -16,6 +16,7 @@ from src.scipeerai.modules.pcurve_analyzer import PCurveAnalyzer
 from src.scipeerai.modules.effect_size_validator import EffectSizeValidator
 from src.scipeerai.modules.retraction_checker import RetractionChecker
 from src.scipeerai.modules.citation_cartel import CitationCartelDetector
+from src.scipeerai.modules.llm_detector import LLMDetector
 
 router = APIRouter(prefix="/api/v1", tags=["Analysis"])
 
@@ -46,6 +47,7 @@ _pcurve_engine         = PCurveAnalyzer()
 _effect_size_engine    = EffectSizeValidator()
 _retraction_engine     = RetractionChecker()
 _cartel_engine         = CitationCartelDetector()
+_llm_engine            = LLMDetector()
 
 # ── Request / Response Models ─────────────────────────────────────────────────
 
@@ -667,6 +669,55 @@ def analyze_cartel(request: CartelRequest):
             summary             = result.summary,
             flags               = [
                 CartelFlagResponse(
+                    flag_type   = f.flag_type,
+                    severity    = f.severity,
+                    description = f.description,
+                    evidence    = f.evidence,
+                    suggestion  = f.suggestion,
+                )
+                for f in result.flags
+            ],
+            flags_count = result.flags_count,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+class LLMRequest(BaseModel):
+    text: str = Field(..., min_length=50)
+
+class LLMFlagResponse(BaseModel):
+    flag_type:   str
+    severity:    str
+    description: str
+    evidence:    str
+    suggestion:  str
+
+class LLMResponse(BaseModel):
+    burstiness_score:     float
+    vocabulary_diversity: float
+    sentence_uniformity:  float
+    llm_phrase_count:     int
+    llm_score:            float
+    risk_level:           str
+    summary:              str
+    flags:                list[LLMFlagResponse]
+    flags_count:          int
+
+@router.post('/analyze/llm', response_model=LLMResponse)
+def analyze_llm(request: LLMRequest):
+    try:
+        result = _llm_engine.analyze(_truncate(request.text))
+        return LLMResponse(
+            burstiness_score     = result.burstiness_score,
+            vocabulary_diversity = result.vocabulary_diversity,
+            sentence_uniformity  = result.sentence_uniformity,
+            llm_phrase_count     = result.llm_phrase_count,
+            llm_score            = result.llm_score,
+            risk_level           = result.risk_level,
+            summary              = result.summary,
+            flags                = [
+                LLMFlagResponse(
                     flag_type   = f.flag_type,
                     severity    = f.severity,
                     description = f.description,
