@@ -15,6 +15,7 @@ from src.scipeerai.modules.granularity_analyzer import GranularityAnalyzer
 from src.scipeerai.modules.pcurve_analyzer import PCurveAnalyzer
 from src.scipeerai.modules.effect_size_validator import EffectSizeValidator
 from src.scipeerai.modules.retraction_checker import RetractionChecker
+from src.scipeerai.modules.citation_cartel import CitationCartelDetector
 
 router = APIRouter(prefix="/api/v1", tags=["Analysis"])
 
@@ -44,6 +45,7 @@ _granularity_engine = GranularityAnalyzer()
 _pcurve_engine         = PCurveAnalyzer()
 _effect_size_engine    = EffectSizeValidator()
 _retraction_engine     = RetractionChecker()
+_cartel_engine         = CitationCartelDetector()
 
 # ── Request / Response Models ─────────────────────────────────────────────────
 
@@ -616,6 +618,55 @@ def analyze_retraction(request: RetractionRequest):
             summary          = result.summary,
             flags            = [
                 RetractionFlagResponse(
+                    flag_type   = f.flag_type,
+                    severity    = f.severity,
+                    description = f.description,
+                    evidence    = f.evidence,
+                    suggestion  = f.suggestion,
+                )
+                for f in result.flags
+            ],
+            flags_count = result.flags_count,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+class CartelRequest(BaseModel):
+    text: str = Field(..., min_length=50)
+
+class CartelFlagResponse(BaseModel):
+    flag_type:   str
+    severity:    str
+    description: str
+    evidence:    str
+    suggestion:  str
+
+class CartelResponse(BaseModel):
+    authors_found:       list
+    citation_network:    dict
+    cartel_score:        float
+    self_citation_ratio: float
+    network_diversity:   float
+    risk_level:          str
+    summary:             str
+    flags:               list[CartelFlagResponse]
+    flags_count:         int
+
+@router.post('/analyze/cartel', response_model=CartelResponse)
+def analyze_cartel(request: CartelRequest):
+    try:
+        result = _cartel_engine.analyze(_truncate(request.text))
+        return CartelResponse(
+            authors_found       = result.authors_found,
+            citation_network    = result.citation_network,
+            cartel_score        = result.cartel_score,
+            self_citation_ratio = result.self_citation_ratio,
+            network_diversity   = result.network_diversity,
+            risk_level          = result.risk_level,
+            summary             = result.summary,
+            flags               = [
+                CartelFlagResponse(
                     flag_type   = f.flag_type,
                     severity    = f.severity,
                     description = f.description,
