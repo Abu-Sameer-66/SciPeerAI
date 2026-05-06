@@ -1713,7 +1713,7 @@ async def analyze_full_pdf(file: UploadFile = File(...)):
                 module="Methodology Checker",
                 risk_level="HIGH" if score >= 0.7 else "MEDIUM" if score >= 0.4 else "LOW",
                 risk_score=score,
-                summary=r.llm_assessment or f"{len(r.flags)} methodology issues found.",
+                summary=r.summary,
                 flags_count=len(r.flags),
             ))
             scores.append(score)
