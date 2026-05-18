@@ -1213,7 +1213,6 @@
 #         raise
 #     except Exception as e:
 #         raise HTTPException(status_code=500, detail=str(e))
-
 import os
 import tempfile
 from fastapi import APIRouter, HTTPException, UploadFile, File
@@ -1238,6 +1237,7 @@ from src.scipeerai.modules.citation_dna import CitationDNAAnalyzer
 from src.scipeerai.modules.data_fingerprint import DataFingerprintAnalyzer
 from src.scipeerai.modules.peer_review_score import PeerReviewScorer
 from src.scipeerai.modules.ai_human_spectrum import AIHumanSpectrumAnalyzer
+from src.scipeerai.modules.replication_predictor import analyze as _predict_replication
 from src.scipeerai.core.pdf_parser import PDFParser
 
 router = APIRouter(prefix="/api/v1", tags=["Analysis"])
@@ -1677,6 +1677,30 @@ class AISpectrumResponse(BaseModel):
     flags:                list[Phase5FlagResponse]
     flags_count:          int
 
+# ── Replication Predictor model ───────────────────────────────────────────────
+
+class ReplicationRequest(BaseModel):
+    text: str = Field(..., min_length=50, description="Paper text to analyze for replication probability")
+
+class ReplicationFlagResponse(BaseModel):
+    flag_type:   str
+    severity:    str
+    description: str
+    evidence:    str
+    suggestion:  str
+
+class ReplicationResponse(BaseModel):
+    replication_probability: float
+    fraud_probability:       float
+    replication_level:       str
+    verdict:                 str
+    risk_score:              float
+    risk_level:              str
+    summary:                 str
+    flags:                   list[ReplicationFlagResponse]
+    flags_count:             int
+    model_version:           str
+
 # ── Full PDF models ───────────────────────────────────────────────────────────
 
 class ModuleSummary(BaseModel):
@@ -1687,17 +1711,19 @@ class ModuleSummary(BaseModel):
     flags_count: int
 
 class FullPDFResponse(BaseModel):
-    paper_title:       str
-    page_count:        int
-    figure_count:      int
-    file_size_kb:      float
-    sha256:            str
-    overall_score:     float
-    overall_risk:      str
-    integrity_verdict: str
-    modules:           list[ModuleSummary]
-    top_flags:         list[str]
-    analyzed_by:       str
+    paper_title:             str
+    page_count:              int
+    figure_count:            int
+    file_size_kb:            float
+    sha256:                  str
+    overall_score:           float
+    overall_risk:            str
+    integrity_verdict:       str
+    replication_probability: float
+    replication_level:       str
+    modules:                 list[ModuleSummary]
+    top_flags:               list[str]
+    analyzed_by:             str
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -1736,30 +1762,31 @@ def _p5flags(flags) -> list:
 def system_status():
     return {
         "modules_ready": {
-            "stat_audit":           True,
-            "figure_forensics":     True,
-            "methodology_checker":  True,
-            "citation_analyzer":    True,
-            "reproducibility":      True,
-            "novelty_scorer":       True,
-            "grim_test":            True,
-            "sprite_test":          True,
-            "granularity":          True,
-            "pcurve":               True,
-            "effect_size":          True,
-            "retraction":           True,
-            "citation_cartel":      True,
-            "llm_detector":         True,
-            "fraud_fingerprint":    True,
-            "temporal_anomaly":     True,
-            "citation_dna":         True,
-            "data_fingerprint":     True,
-            "peer_review_score":    True,
-            "ai_human_spectrum":    True,
+            "stat_audit":                True,
+            "figure_forensics":          True,
+            "methodology_checker":       True,
+            "citation_analyzer":         True,
+            "reproducibility":           True,
+            "novelty_scorer":            True,
+            "grim_test":                 True,
+            "sprite_test":               True,
+            "granularity":               True,
+            "pcurve":                    True,
+            "effect_size":               True,
+            "retraction":                True,
+            "citation_cartel":           True,
+            "llm_detector":              True,
+            "fraud_fingerprint":         True,
+            "temporal_anomaly":          True,
+            "citation_dna":              True,
+            "data_fingerprint":          True,
+            "peer_review_score":         True,
+            "ai_human_spectrum":         True,
+            "replication_predictor":     True,
         },
-        "version":         "2.0.0",
-        "modules_count":   20,
-        "tests_passing":   180,
+        "version":         "2.1.0",
+        "modules_count":   21,
+        "tests_passing":   194,
         "text_extraction": "section-aware",
     }
 
@@ -2103,13 +2130,169 @@ def analyze_ai_spectrum(request: TextAnalysisRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# ── Full PDF — 20-Module Master Endpoint ─────────────────────────────────────
+# ── Replication Predictor endpoint ────────────────────────────────────────────
+
+@router.post("/analyze/replication", response_model=ReplicationResponse)
+def analyze_replication(request: TextAnalysisRequest):
+    """
+    Replication Probability Score — ML-based replication likelihood prediction.
+    Runs all integrity signals through a trained LogisticRegression model
+    and returns the probability that this paper is replicable.
+    """
+    try:
+        text = request.text
+
+        module_scores: dict = {}
+
+        try:
+            r = _stat_engine.analyze(_smart_text(text, "statistics"))
+            module_scores["score_stat"] = r.risk_score
+        except Exception:
+            module_scores["score_stat"] = 0.0
+
+        try:
+            r = _method_engine.analyze(_smart_text(text, "methodology"), "")
+            module_scores["score_method"] = 0.7 if len(r.flags) > 2 else 0.3 if r.flags else 0.1
+        except Exception:
+            module_scores["score_method"] = 0.0
+
+        try:
+            r = _citation_engine.analyze(_smart_text(text, "citations"), "")
+            module_scores["score_citation"] = r.risk_score
+        except Exception:
+            module_scores["score_citation"] = 0.0
+
+        try:
+            r = _repro_engine.analyze(_smart_text(text, "reproducibility"))
+            module_scores["score_repro"] = round(1.0 - r.reproducibility_score, 4)
+        except Exception:
+            module_scores["score_repro"] = 0.0
+
+        try:
+            r = _novelty_engine.analyze(_smart_text(text, "novelty", per_section_limit=2000), "")
+            module_scores["score_novelty"] = getattr(r, "risk_score", round(1.0 - r.novelty_score, 4))
+        except Exception:
+            module_scores["score_novelty"] = 0.0
+
+        try:
+            r = _grim_engine.analyze(_smart_text(text, "grim"))
+            module_scores["score_grim"] = r.grim_score
+        except Exception:
+            module_scores["score_grim"] = 0.0
+
+        try:
+            r = _sprite_engine.analyze(_smart_text(text, "sprite"))
+            module_scores["score_sprite"] = r.sprite_score
+        except Exception:
+            module_scores["score_sprite"] = 0.0
+
+        try:
+            r = _granularity_engine.analyze(_smart_text(text, "granularity"))
+            module_scores["score_granularity"] = r.granularity_score
+        except Exception:
+            module_scores["score_granularity"] = 0.0
+
+        try:
+            r = _pcurve_engine.analyze(_smart_text(text, "pcurve"))
+            module_scores["score_pcurve"] = r.pcurve_score
+        except Exception:
+            module_scores["score_pcurve"] = 0.0
+
+        try:
+            r = _effect_size_engine.analyze(_smart_text(text, "effect_size"))
+            module_scores["score_effect"] = r.effect_score
+        except Exception:
+            module_scores["score_effect"] = 0.0
+
+        try:
+            r = _retraction_engine.analyze(_smart_text(text, "retraction"))
+            module_scores["score_retraction"] = r.retraction_score
+        except Exception:
+            module_scores["score_retraction"] = 0.0
+
+        try:
+            r = _cartel_engine.analyze(_smart_text(text, "cartel"))
+            module_scores["score_cartel"] = r.cartel_score
+        except Exception:
+            module_scores["score_cartel"] = 0.0
+
+        try:
+            r = _llm_engine.analyze(_smart_text(text, "llm"))
+            module_scores["score_llm"] = r.llm_score
+        except Exception:
+            module_scores["score_llm"] = 0.0
+
+        try:
+            r = _fraud_engine.analyze(_smart_text(text, "fraud_fingerprint"))
+            module_scores["score_fraud"] = r.fingerprint_score
+        except Exception:
+            module_scores["score_fraud"] = 0.0
+
+        try:
+            r = _temporal_engine.analyze(_smart_text(text, "temporal"))
+            module_scores["score_temporal"] = r.temporal_score
+        except Exception:
+            module_scores["score_temporal"] = 0.0
+
+        try:
+            r = _dna_engine.analyze(_smart_text(text, "citation_dna"))
+            module_scores["score_dna"] = r.dna_risk_score
+        except Exception:
+            module_scores["score_dna"] = 0.0
+
+        try:
+            r = _dataprint_engine.analyze(_smart_text(text, "data_fingerprint"))
+            module_scores["score_dataprint"] = r.fingerprint_score
+        except Exception:
+            module_scores["score_dataprint"] = 0.0
+
+        try:
+            r = _peerreview_engine.analyze(_smart_text(text, "peer_review"))
+            module_scores["score_peerreview"] = r.manipulation_score
+        except Exception:
+            module_scores["score_peerreview"] = 0.0
+
+        try:
+            r = _spectrum_engine.analyze(_smart_text(text, "ai_spectrum"))
+            module_scores["score_spectrum"] = r.spectrum_score
+        except Exception:
+            module_scores["score_spectrum"] = 0.0
+
+        result = _predict_replication(module_scores)
+
+        return ReplicationResponse(
+            replication_probability = result.replication_probability,
+            fraud_probability       = result.fraud_probability,
+            replication_level       = result.replication_level,
+            verdict                 = result.verdict,
+            risk_score              = result.risk_score,
+            risk_level              = result.risk_level,
+            summary                 = result.summary,
+            flags                   = [
+                ReplicationFlagResponse(
+                    flag_type   = f["flag_type"],
+                    severity    = f["severity"],
+                    description = f["description"],
+                    evidence    = f["evidence"],
+                    suggestion  = f["suggestion"],
+                ) for f in result.flags
+            ],
+            flags_count   = result.flags_count,
+            model_version = result.model_version,
+        )
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ── Full PDF — 21-Module Master Endpoint ─────────────────────────────────────
 
 @router.post("/analyze/full-pdf", response_model=FullPDFResponse)
 async def analyze_full_pdf(file: UploadFile = File(...)):
     """
-    Master endpoint — Upload a PDF and run all 20 analysis modules at once.
-    Returns a unified integrity report with per-module scores and top flags.
+    Master endpoint — Upload a PDF and run all 21 analysis modules at once.
+    Returns a unified integrity report with per-module scores, top flags,
+    and an ML-based replication probability prediction.
     Designed for PhD researchers, journal editors, and integrity committees.
     """
     try:
@@ -2124,15 +2307,17 @@ async def analyze_full_pdf(file: UploadFile = File(...)):
                        "Ensure the PDF contains selectable text (not a scanned image)."
             )
 
-        modules_run = []
-        top_flags   = []
-        scores      = []
+        modules_run    = []
+        top_flags      = []
+        scores         = []
+        module_scores: dict = {}
 
         # ── Module 01: Statistical Audit ──────────────────────────
         try:
             r = _stat_engine.analyze(_smart_text(text, "statistics"))
             modules_run.append(ModuleSummary(module="Statistical Audit", risk_level=r.risk_level, risk_score=r.risk_score, summary=r.summary, flags_count=len(r.flags)))
             scores.append(r.risk_score)
+            module_scores["score_stat"] = r.risk_score
             for f in r.flags[:2]: top_flags.append(f"[Statistics] {f.description}")
         except Exception: pass
 
@@ -2143,6 +2328,7 @@ async def analyze_full_pdf(file: UploadFile = File(...)):
             score = 0.7 if len(r.flags) > 2 else 0.3 if r.flags else 0.1
             modules_run.append(ModuleSummary(module="Methodology Checker", risk_level="HIGH" if score >= 0.7 else "MEDIUM" if score >= 0.4 else "LOW", risk_score=score, summary=r.summary, flags_count=len(r.flags)))
             scores.append(score)
+            module_scores["score_method"] = score
             for f in r.flags[:2]: top_flags.append(f"[Methodology] {f.issue}")
         except Exception: pass
 
@@ -2151,22 +2337,27 @@ async def analyze_full_pdf(file: UploadFile = File(...)):
             r = _citation_engine.analyze(_smart_text(text, "citations"), "")
             modules_run.append(ModuleSummary(module="Citation Integrity", risk_level=r.risk_level, risk_score=r.risk_score, summary=r.summary, flags_count=len(r.flags)))
             scores.append(r.risk_score)
+            module_scores["score_citation"] = r.risk_score
             for f in r.flags[:2]: top_flags.append(f"[Citations] {f.description}")
         except Exception: pass
 
         # ── Module 04: Reproducibility ────────────────────────────
         try:
             r = _repro_engine.analyze(_smart_text(text, "reproducibility"))
-            modules_run.append(ModuleSummary(module="Reproducibility Scanner", risk_level=r.risk_level, risk_score=1.0 - r.reproducibility_score, summary=r.summary, flags_count=len(r.flags)))
-            scores.append(1.0 - r.reproducibility_score)
+            repro_risk = round(1.0 - r.reproducibility_score, 4)
+            modules_run.append(ModuleSummary(module="Reproducibility Scanner", risk_level=r.risk_level, risk_score=repro_risk, summary=r.summary, flags_count=len(r.flags)))
+            scores.append(repro_risk)
+            module_scores["score_repro"] = repro_risk
             for f in r.flags[:1]: top_flags.append(f"[Reproducibility] {f.description}")
         except Exception: pass
 
         # ── Module 05: Novelty ────────────────────────────────────
         try:
             r = _novelty_engine.analyze(_smart_text(text, "novelty", per_section_limit=2000), paper.title)
-            modules_run.append(ModuleSummary(module="Novelty Scorer", risk_level=r.risk_level, risk_score=getattr(r, "risk_score", 1.0 - r.novelty_score), summary=r.summary, flags_count=len(getattr(r, "flags", []) or [])))
-            scores.append(getattr(r, "risk_score", 1.0 - r.novelty_score))
+            novelty_risk = getattr(r, "risk_score", round(1.0 - r.novelty_score, 4))
+            modules_run.append(ModuleSummary(module="Novelty Scorer", risk_level=r.risk_level, risk_score=novelty_risk, summary=r.summary, flags_count=len(getattr(r, "flags", []) or [])))
+            scores.append(novelty_risk)
+            module_scores["score_novelty"] = novelty_risk
         except Exception: pass
 
         # ── Module 06: GRIM Test ──────────────────────────────────
@@ -2174,6 +2365,7 @@ async def analyze_full_pdf(file: UploadFile = File(...)):
             r = _grim_engine.analyze(_smart_text(text, "grim"))
             modules_run.append(ModuleSummary(module="GRIM Test", risk_level=r.risk_level, risk_score=r.grim_score, summary=r.summary, flags_count=r.flags_count))
             scores.append(r.grim_score)
+            module_scores["score_grim"] = r.grim_score
             for f in r.flags[:1]: top_flags.append(f"[GRIM] {f.description}")
         except Exception: pass
 
@@ -2182,6 +2374,7 @@ async def analyze_full_pdf(file: UploadFile = File(...)):
             r = _sprite_engine.analyze(_smart_text(text, "sprite"))
             modules_run.append(ModuleSummary(module="SPRITE Test", risk_level=r.risk_level, risk_score=r.sprite_score, summary=r.summary, flags_count=r.flags_count))
             scores.append(r.sprite_score)
+            module_scores["score_sprite"] = r.sprite_score
         except Exception: pass
 
         # ── Module 08: Granularity ────────────────────────────────
@@ -2189,6 +2382,7 @@ async def analyze_full_pdf(file: UploadFile = File(...)):
             r = _granularity_engine.analyze(_smart_text(text, "granularity"))
             modules_run.append(ModuleSummary(module="Granularity Analyzer", risk_level=r.risk_level, risk_score=r.granularity_score, summary=r.summary, flags_count=r.flags_count))
             scores.append(r.granularity_score)
+            module_scores["score_granularity"] = r.granularity_score
         except Exception: pass
 
         # ── Module 09: P-Curve ────────────────────────────────────
@@ -2196,6 +2390,7 @@ async def analyze_full_pdf(file: UploadFile = File(...)):
             r = _pcurve_engine.analyze(_smart_text(text, "pcurve"))
             modules_run.append(ModuleSummary(module="P-Curve Analyzer", risk_level=r.risk_level, risk_score=r.pcurve_score, summary=r.summary, flags_count=r.flags_count))
             scores.append(r.pcurve_score)
+            module_scores["score_pcurve"] = r.pcurve_score
             for f in r.flags[:1]: top_flags.append(f"[P-Curve] {f.description}")
         except Exception: pass
 
@@ -2204,6 +2399,7 @@ async def analyze_full_pdf(file: UploadFile = File(...)):
             r = _effect_size_engine.analyze(_smart_text(text, "effect_size"))
             modules_run.append(ModuleSummary(module="Effect Size Validator", risk_level=r.risk_level, risk_score=r.effect_score, summary=r.summary, flags_count=r.flags_count))
             scores.append(r.effect_score)
+            module_scores["score_effect"] = r.effect_score
         except Exception: pass
 
         # ── Module 11: Retraction Checker ─────────────────────────
@@ -2211,6 +2407,7 @@ async def analyze_full_pdf(file: UploadFile = File(...)):
             r = _retraction_engine.analyze(_smart_text(text, "retraction"))
             modules_run.append(ModuleSummary(module="Retraction Checker", risk_level=r.risk_level, risk_score=r.retraction_score, summary=r.summary, flags_count=r.flags_count))
             scores.append(r.retraction_score)
+            module_scores["score_retraction"] = r.retraction_score
             for f in r.flags[:1]: top_flags.append(f"[Retraction] {f.description}")
         except Exception: pass
 
@@ -2219,6 +2416,7 @@ async def analyze_full_pdf(file: UploadFile = File(...)):
             r = _cartel_engine.analyze(_smart_text(text, "cartel"))
             modules_run.append(ModuleSummary(module="Citation Cartel Detector", risk_level=r.risk_level, risk_score=r.cartel_score, summary=r.summary, flags_count=r.flags_count))
             scores.append(r.cartel_score)
+            module_scores["score_cartel"] = r.cartel_score
             for f in r.flags[:1]: top_flags.append(f"[Cartel] {f.description}")
         except Exception: pass
 
@@ -2227,6 +2425,7 @@ async def analyze_full_pdf(file: UploadFile = File(...)):
             r = _llm_engine.analyze(_smart_text(text, "llm"))
             modules_run.append(ModuleSummary(module="LLM Paper Detector", risk_level=r.risk_level, risk_score=r.llm_score, summary=r.summary, flags_count=r.flags_count))
             scores.append(r.llm_score)
+            module_scores["score_llm"] = r.llm_score
             for f in r.flags[:1]: top_flags.append(f"[LLM] {f.description}")
         except Exception: pass
 
@@ -2248,6 +2447,7 @@ async def analyze_full_pdf(file: UploadFile = File(...)):
             r = _fraud_engine.analyze(_smart_text(text, "fraud_fingerprint"))
             modules_run.append(ModuleSummary(module="Fraud Fingerprinting", risk_level=r.risk_level, risk_score=r.fingerprint_score, summary=r.summary, flags_count=r.flags_count))
             scores.append(r.fingerprint_score)
+            module_scores["score_fraud"] = r.fingerprint_score
             for f in r.flags[:1]: top_flags.append(f"[Fingerprint] {f.description}")
         except Exception: pass
 
@@ -2256,6 +2456,7 @@ async def analyze_full_pdf(file: UploadFile = File(...)):
             r = _temporal_engine.analyze(_smart_text(text, "temporal"))
             modules_run.append(ModuleSummary(module="Temporal Anomaly Detector", risk_level=r.risk_level, risk_score=r.temporal_score, summary=r.summary, flags_count=r.flags_count))
             scores.append(r.temporal_score)
+            module_scores["score_temporal"] = r.temporal_score
             for f in r.flags[:1]: top_flags.append(f"[Temporal] {f.description}")
         except Exception: pass
 
@@ -2264,6 +2465,7 @@ async def analyze_full_pdf(file: UploadFile = File(...)):
             r = _dna_engine.analyze(_smart_text(text, "citation_dna"))
             modules_run.append(ModuleSummary(module="Citation DNA Analyzer", risk_level=r.risk_level, risk_score=r.dna_risk_score, summary=r.summary, flags_count=r.flags_count))
             scores.append(r.dna_risk_score)
+            module_scores["score_dna"] = r.dna_risk_score
             for f in r.flags[:1]: top_flags.append(f"[CitationDNA] {f.description}")
         except Exception: pass
 
@@ -2272,6 +2474,7 @@ async def analyze_full_pdf(file: UploadFile = File(...)):
             r = _dataprint_engine.analyze(_smart_text(text, "data_fingerprint"))
             modules_run.append(ModuleSummary(module="Data Fingerprint Analyzer", risk_level=r.risk_level, risk_score=r.fingerprint_score, summary=r.summary, flags_count=r.flags_count))
             scores.append(r.fingerprint_score)
+            module_scores["score_dataprint"] = r.fingerprint_score
             for f in r.flags[:1]: top_flags.append(f"[DataFingerprint] {f.description}")
         except Exception: pass
 
@@ -2280,6 +2483,7 @@ async def analyze_full_pdf(file: UploadFile = File(...)):
             r = _peerreview_engine.analyze(_smart_text(text, "peer_review"))
             modules_run.append(ModuleSummary(module="Peer Review Score", risk_level=r.risk_level, risk_score=r.manipulation_score, summary=r.summary, flags_count=r.flags_count))
             scores.append(r.manipulation_score)
+            module_scores["score_peerreview"] = r.manipulation_score
             for f in r.flags[:1]: top_flags.append(f"[PeerReview] {f.description}")
         except Exception: pass
 
@@ -2288,24 +2492,46 @@ async def analyze_full_pdf(file: UploadFile = File(...)):
             r = _spectrum_engine.analyze(_smart_text(text, "ai_spectrum"))
             modules_run.append(ModuleSummary(module="AI-Human Spectrum", risk_level=r.risk_level, risk_score=r.spectrum_score, summary=r.summary, flags_count=r.flags_count))
             scores.append(r.spectrum_score)
+            module_scores["score_spectrum"] = r.spectrum_score
             for f in r.flags[:1]: top_flags.append(f"[AISpectrum] {f.description}")
+        except Exception: pass
+
+        # ── Module 21: Replication Probability Score ──────────────
+        replication_probability = 0.5
+        replication_level       = "UNKNOWN"
+        try:
+            rep = _predict_replication(module_scores)
+            replication_probability = rep.replication_probability
+            replication_level       = rep.replication_level
+            modules_run.append(ModuleSummary(
+                module      = "Replication Probability Score",
+                risk_level  = rep.risk_level,
+                risk_score  = rep.risk_score,
+                summary     = rep.summary,
+                flags_count = rep.flags_count,
+            ))
+            scores.append(rep.risk_score)
+            if rep.flags_count > 0:
+                top_flags.append(f"[Replication] {rep.verdict}")
         except Exception: pass
 
         # ── Final Score ───────────────────────────────────────────
         overall_score, overall_risk = _compute_overall(scores)
 
         return FullPDFResponse(
-            paper_title       = paper.title,
-            page_count        = paper.page_count,
-            figure_count      = paper.figure_count,
-            file_size_kb      = paper.metadata.get("file_size_kb", 0.0),
-            sha256            = paper.metadata.get("sha256", ""),
-            overall_score     = overall_score,
-            overall_risk      = overall_risk,
-            integrity_verdict = _verdict(overall_risk),
-            modules           = modules_run,
-            top_flags         = top_flags[:10],
-            analyzed_by       = "SciPeerAI v2.0.0 — 20-Module Pipeline",
+            paper_title             = paper.title,
+            page_count              = paper.page_count,
+            figure_count            = paper.figure_count,
+            file_size_kb            = paper.metadata.get("file_size_kb", 0.0),
+            sha256                  = paper.metadata.get("sha256", ""),
+            overall_score           = overall_score,
+            overall_risk            = overall_risk,
+            integrity_verdict       = _verdict(overall_risk),
+            replication_probability = replication_probability,
+            replication_level       = replication_level,
+            modules                 = modules_run,
+            top_flags               = top_flags[:10],
+            analyzed_by             = "SciPeerAI v2.1.0 — 21-Module Pipeline",
         )
 
     except HTTPException:
