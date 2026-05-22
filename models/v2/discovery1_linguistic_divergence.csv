@@ -1,0 +1,11 @@
+feature,fraud_mean,clean_mean,divergence_pct
+vocab_diversity,0.687,0.7219,4.84
+burstiness,0.4136,0.4028,2.67
+sentence_uniformity,0.5864,0.5972,1.8
+ai_phrase_density,0.0015,0.0018,13.73
+round_number_ratio,0.1325,0.1302,1.77
+methodology_score,0.0085,0.014,39.36
+repro_positive,0.0016,0.0074,78.33
+number_density,0.0263,0.0201,30.87
+benford_deviation,0.0704,0.0725,2.88
+integrity_index,0.4948,0.4958,0.21
