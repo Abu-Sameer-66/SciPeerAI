@@ -11,3 +11,4 @@ numpy==1.26.4
 scipy==1.13.0
 PyWavelets==1.6.0
 python-multipart==0.0.9
+requests==2.32.3
