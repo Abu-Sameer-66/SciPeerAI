@@ -4595,7 +4595,7 @@ def system_status():
         },
         "version":         "2.3.0",
         "modules_count":   24,
-        "tests_passing":   139,
+        "tests_passing":   209,
         "text_extraction": "section-aware",
         "ml_ensemble":     "LightGBM+XGBoost+RF+LR",
         "benchmark":       "SciPeerBench v2.0 — 91,779 papers",
