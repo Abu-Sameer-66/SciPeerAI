@@ -1,4 +1,4 @@
-# import os
+﻿# import os
 # import tempfile
 # from fastapi import APIRouter, HTTPException, UploadFile, File
 # from pydantic import BaseModel, Field
@@ -25,7 +25,7 @@
 # from src.scipeerai.modules.ai_human_spectrum import AIHumanSpectrumAnalyzer
 # router = APIRouter(prefix="/api/v1", tags=["Analysis"])
 
-# # ── Section-aware text extraction — replaces flat truncation ──────────────────
+# # â”€â”€ Section-aware text extraction â€” replaces flat truncation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 # _SECTION_MARKERS = [
 #     "abstract", "introduction", "background", "related work",
@@ -154,7 +154,7 @@
 #     return text[:limit]
 
 
-# # ── Engine initialization ─────────────────────────────────────────────────────
+# # â”€â”€ Engine initialization â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # _stat_engine        = StatAuditEngine()
 # _figure_engine      = FigureForensicsEngine()
 # _method_engine      = MethodologyChecker()
@@ -177,7 +177,7 @@
 # _peerreview_engine  = PeerReviewScorer()
 # _spectrum_engine    = AIHumanSpectrumAnalyzer()
 
-# # ── Request / Response Models ─────────────────────────────────────────────────
+# # â”€â”€ Request / Response Models â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 # class TextAnalysisRequest(BaseModel):
 #     text: str = Field(..., min_length=50, description="Paper text to analyze")
@@ -458,7 +458,7 @@
 #     flags_count:          int
 
 
-# # ── Endpoints ─────────────────────────────────────────────────────────────────
+# # â”€â”€ Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 # @router.get("/status")
 # def system_status():
@@ -670,7 +670,7 @@
 
 # @router.post("/analyze/grim", response_model=GrimResponse)
 # def analyze_grim(request: GrimRequest):
-#     """GRIM Test — detect mathematically impossible means."""
+#     """GRIM Test â€” detect mathematically impossible means."""
 #     try:
 #         result = _grim_engine.analyze(
 #             _smart_text(request.text, "grim")
@@ -698,7 +698,7 @@
 
 # @router.post("/analyze/sprite", response_model=SpriteResponse)
 # def analyze_sprite(request: SpriteRequest):
-#     """SPRITE Test — detect impossible distributions."""
+#     """SPRITE Test â€” detect impossible distributions."""
 #     try:
 #         result = _sprite_engine.analyze(
 #             _smart_text(request.text, "sprite")
@@ -726,7 +726,7 @@
 
 # @router.post("/analyze/granularity", response_model=GranularityResponse)
 # def analyze_granularity(request: GranularityRequest):
-#     """Granularity Analyzer — Benford Law + digit preference."""
+#     """Granularity Analyzer â€” Benford Law + digit preference."""
 #     try:
 #         result = _granularity_engine.analyze(
 #             _smart_text(request.text, "granularity")
@@ -755,7 +755,7 @@
 
 # @router.post("/analyze/pcurve", response_model=PCurveResponse)
 # def analyze_pcurve(request: PCurveRequest):
-#     """P-Curve Analyzer — publication bias detector."""
+#     """P-Curve Analyzer â€” publication bias detector."""
 #     try:
 #         result = _pcurve_engine.analyze(
 #             _smart_text(request.text, "pcurve")
@@ -785,7 +785,7 @@
 
 # @router.post('/analyze/effect_size', response_model=EffectSizeResponse)
 # def analyze_effect_size(request: EffectSizeRequest):
-#     """Effect Size Validator — Cohen d, power analysis."""
+#     """Effect Size Validator â€” Cohen d, power analysis."""
 #     try:
 #         result = _effect_size_engine.analyze(
 #             _smart_text(request.text, "effect_size")
@@ -815,7 +815,7 @@
 
 # @router.post('/analyze/retraction', response_model=RetractionResponse)
 # def analyze_retraction(request: RetractionRequest):
-#     """Retraction Checker — live CrossRef API."""
+#     """Retraction Checker â€” live CrossRef API."""
 #     try:
 #         result = _retraction_engine.analyze(
 #             _smart_text(request.text, "retraction")
@@ -844,7 +844,7 @@
 
 # @router.post('/analyze/cartel', response_model=CartelResponse)
 # def analyze_cartel(request: CartelRequest):
-#     """Citation Cartel Detector — graph-based ring detection."""
+#     """Citation Cartel Detector â€” graph-based ring detection."""
 #     try:
 #         result = _cartel_engine.analyze(
 #             _smart_text(request.text, "cartel")
@@ -874,7 +874,7 @@
 
 # @router.post('/analyze/llm', response_model=LLMResponse)
 # def analyze_llm(request: LLMRequest):
-#     """LLM-Generated Paper Detector — burstiness + TTR."""
+#     """LLM-Generated Paper Detector â€” burstiness + TTR."""
 #     try:
 #         result = _llm_engine.analyze(
 #             _smart_text(request.text, "llm")
@@ -901,7 +901,7 @@
 #     except Exception as e:
 #         raise HTTPException(status_code=500, detail=str(e))
     
-# # ── Full PDF Analysis — Master Endpoint ──────────────────────────────────────
+# # â”€â”€ Full PDF Analysis â€” Master Endpoint â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 # class ModuleSummary(BaseModel):
 #     module:     str
@@ -946,7 +946,7 @@
 # @router.post("/analyze/full-pdf", response_model=FullPDFResponse)
 # async def analyze_full_pdf(file: UploadFile = File(...)):
 #     """
-#     Master endpoint — Upload a PDF and run all 14 analysis modules at once.
+#     Master endpoint â€” Upload a PDF and run all 14 analysis modules at once.
 #     Returns a unified integrity report with per-module scores and top flags.
 #     Designed for PhD researchers who want a single comprehensive analysis.
 #     """
@@ -966,7 +966,7 @@
 #         top_flags   = []
 #         scores      = []
 
-#         # ── Module 1: Statistical Audit ───────────────────────────
+#         # â”€â”€ Module 1: Statistical Audit â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _stat_engine.analyze(_smart_text(text, "statistics"))
 #             modules_run.append(ModuleSummary(
@@ -982,7 +982,7 @@
 #         except Exception:
 #             pass
 
-#         # ── Module 2: Methodology Checker ─────────────────────────
+#         # â”€â”€ Module 2: Methodology Checker â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             abstract = paper.sections.get("abstract", "")
 #             r = _method_engine.analyze(_smart_text(text, "methodology"), abstract)
@@ -1000,7 +1000,7 @@
 #         except Exception:
 #             pass
 
-#         # ── Module 3: Citation Integrity ──────────────────────────
+#         # â”€â”€ Module 3: Citation Integrity â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _citation_engine.analyze(_smart_text(text, "citations"), "")
 #             modules_run.append(ModuleSummary(
@@ -1016,7 +1016,7 @@
 #         except Exception:
 #             pass
 
-#         # ── Module 4: Reproducibility ─────────────────────────────
+#         # â”€â”€ Module 4: Reproducibility â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _repro_engine.analyze(_smart_text(text, "reproducibility"))
 #             modules_run.append(ModuleSummary(
@@ -1032,7 +1032,7 @@
 #         except Exception:
 #             pass
 
-#         # ── Module 5: Novelty ─────────────────────────────────────
+#         # â”€â”€ Module 5: Novelty â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _novelty_engine.analyze(
 #                 _smart_text(text, "novelty", per_section_limit=2000),
@@ -1049,7 +1049,7 @@
 #         except Exception:
 #             pass
 
-#         # ── Module 6: GRIM Test ───────────────────────────────────
+#         # â”€â”€ Module 6: GRIM Test â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _grim_engine.analyze(_smart_text(text, "grim"))
 #             modules_run.append(ModuleSummary(
@@ -1065,7 +1065,7 @@
 #         except Exception:
 #             pass
 
-#         # ── Module 7: SPRITE Test ─────────────────────────────────
+#         # â”€â”€ Module 7: SPRITE Test â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _sprite_engine.analyze(_smart_text(text, "sprite"))
 #             modules_run.append(ModuleSummary(
@@ -1079,7 +1079,7 @@
 #         except Exception:
 #             pass
 
-#         # ── Module 8: Granularity ─────────────────────────────────
+#         # â”€â”€ Module 8: Granularity â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _granularity_engine.analyze(_smart_text(text, "granularity"))
 #             modules_run.append(ModuleSummary(
@@ -1093,7 +1093,7 @@
 #         except Exception:
 #             pass
 
-#         # ── Module 9: P-Curve ─────────────────────────────────────
+#         # â”€â”€ Module 9: P-Curve â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _pcurve_engine.analyze(_smart_text(text, "pcurve"))
 #             modules_run.append(ModuleSummary(
@@ -1109,7 +1109,7 @@
 #         except Exception:
 #             pass
 
-#         # ── Module 10: Effect Size ────────────────────────────────
+#         # â”€â”€ Module 10: Effect Size â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _effect_size_engine.analyze(_smart_text(text, "effect_size"))
 #             modules_run.append(ModuleSummary(
@@ -1123,7 +1123,7 @@
 #         except Exception:
 #             pass
 
-#         # ── Module 11: Retraction Checker ─────────────────────────
+#         # â”€â”€ Module 11: Retraction Checker â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _retraction_engine.analyze(_smart_text(text, "retraction"))
 #             modules_run.append(ModuleSummary(
@@ -1139,7 +1139,7 @@
 #         except Exception:
 #             pass
 
-#         # ── Module 12: Citation Cartel ────────────────────────────
+#         # â”€â”€ Module 12: Citation Cartel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _cartel_engine.analyze(_smart_text(text, "cartel"))
 #             modules_run.append(ModuleSummary(
@@ -1155,7 +1155,7 @@
 #         except Exception:
 #             pass
 
-#         # ── Module 13: LLM Detector ───────────────────────────────
+#         # â”€â”€ Module 13: LLM Detector â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _llm_engine.analyze(_smart_text(text, "llm"))
 #             modules_run.append(ModuleSummary(
@@ -1171,7 +1171,7 @@
 #         except Exception:
 #             pass
 
-#         # ── Module 14: Figure Forensics ───────────────────────────
+#         # â”€â”€ Module 14: Figure Forensics â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             tmp_path = None
 #             with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
@@ -1192,7 +1192,7 @@
 #         except Exception:
 #             pass
 
-#         # ── Final Score ───────────────────────────────────────────
+#         # â”€â”€ Final Score â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         overall_score, overall_risk = _compute_overall(scores)
 
 #         return FullPDFResponse(
@@ -1206,7 +1206,7 @@
 #             integrity_verdict = _verdict(overall_risk),
 #             modules           = modules_run,
 #             top_flags         = top_flags[:10],
-#             analyzed_by       = "SciPeerAI v1.5.0 — 14-Module Pipeline",
+#             analyzed_by       = "SciPeerAI v1.5.0 â€” 14-Module Pipeline",
 #         )
 
 #     except HTTPException:
@@ -1242,7 +1242,7 @@
 
 # router = APIRouter(prefix="/api/v1", tags=["Analysis"])
 
-# # ── Section-aware text routing ────────────────────────────────────────────────
+# # â”€â”€ Section-aware text routing â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 # _SECTION_MARKERS = [
 #     "abstract", "introduction", "background", "related work",
@@ -1361,7 +1361,7 @@
 #     return text[:limit]
 
 
-# # ── Engine initialization ─────────────────────────────────────────────────────
+# # â”€â”€ Engine initialization â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 # _stat_engine        = StatAuditEngine()
 # _figure_engine      = FigureForensicsEngine()
@@ -1386,7 +1386,7 @@
 # _pdf_parser         = PDFParser()
 
 
-# # ── Shared response models ────────────────────────────────────────────────────
+# # â”€â”€ Shared response models â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 # class TextAnalysisRequest(BaseModel):
 #     text: str = Field(..., min_length=50, description="Paper text to analyze")
@@ -1590,7 +1590,7 @@
 #     llm_phrase_count: int; llm_score: float; risk_level: str; summary: str
 #     flags: list[LLMFlagResponse]; flags_count: int
 
-# # ── Phase 5 models ────────────────────────────────────────────────────────────
+# # â”€â”€ Phase 5 models â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 # class Phase5FlagResponse(BaseModel):
 #     flag_type:   str
@@ -1677,7 +1677,7 @@
 #     flags:                list[Phase5FlagResponse]
 #     flags_count:          int
 
-# # ── Replication Predictor model ───────────────────────────────────────────────
+# # â”€â”€ Replication Predictor model â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 # class ReplicationRequest(BaseModel):
 #     text: str = Field(..., min_length=50, description="Paper text to analyze for replication probability")
@@ -1701,7 +1701,7 @@
 #     flags_count:             int
 #     model_version:           str
 
-# # ── Full PDF models ───────────────────────────────────────────────────────────
+# # â”€â”€ Full PDF models â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 # class ModuleSummary(BaseModel):
 #     module:      str
@@ -1726,7 +1726,7 @@
 #     analyzed_by:             str
 
 
-# # ── Helpers ───────────────────────────────────────────────────────────────────
+# # â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 # def _compute_overall(scores: list[float]) -> tuple[float, str]:
 #     avg = round(sum(scores) / len(scores), 3) if scores else 0.0
@@ -1756,7 +1756,7 @@
 #     ]
 
 
-# # ── Status ────────────────────────────────────────────────────────────────────
+# # â”€â”€ Status â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 # @router.get("/status")
 # def system_status():
@@ -1791,11 +1791,11 @@
 #     }
 
 
-# # ── Original 14 endpoints ─────────────────────────────────────────────────────
+# # â”€â”€ Original 14 endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 # @router.post("/analyze/statistics", response_model=StatAuditResponse)
 # def analyze_statistics(request: TextAnalysisRequest):
-#     """Statistical Audit — p-hacking, sample size, round numbers."""
+#     """Statistical Audit â€” p-hacking, sample size, round numbers."""
 #     try:
 #         r = _stat_engine.analyze(_smart_text(request.text, "statistics"))
 #         return StatAuditResponse(
@@ -1813,7 +1813,7 @@
 
 # @router.post("/analyze/figures", response_model=FigureForensicsResponse)
 # async def analyze_figures(file: UploadFile = File(...)):
-#     """Figure Forensics — duplicate image detection."""
+#     """Figure Forensics â€” duplicate image detection."""
 #     if not file.filename.endswith(".pdf"):
 #         raise HTTPException(status_code=400, detail="Only PDF files accepted.")
 #     tmp_path = None
@@ -1839,7 +1839,7 @@
 
 # @router.post("/analyze/methodology", response_model=MethodologyResponse)
 # def analyze_methodology(request: MethodologyRequest):
-#     """Methodology Checker — causation, control groups, timeframe."""
+#     """Methodology Checker â€” causation, control groups, timeframe."""
 #     try:
 #         r = _method_engine.analyze(_smart_text(request.text, "methodology"), request.abstract)
 #         return MethodologyResponse(
@@ -1855,7 +1855,7 @@
 
 # @router.post("/analyze/citations", response_model=CitationResponse)
 # def analyze_citations(request: CitationRequest):
-#     """Citation Integrity — self-citation, unsupported claims."""
+#     """Citation Integrity â€” self-citation, unsupported claims."""
 #     try:
 #         r = _citation_engine.analyze(_smart_text(request.text, "citations"), request.author_name)
 #         return CitationResponse(
@@ -1875,7 +1875,7 @@
 
 # @router.post("/analyze/reproducibility", response_model=ReproducibilityResponse)
 # def analyze_reproducibility(request: ReproducibilityRequest):
-#     """Reproducibility Scanner — code, data, ethics, preregistration."""
+#     """Reproducibility Scanner â€” code, data, ethics, preregistration."""
 #     try:
 #         r = _repro_engine.analyze(_smart_text(request.text, "reproducibility"))
 #         return ReproducibilityResponse(
@@ -1896,7 +1896,7 @@
 
 # @router.post("/analyze/novelty", response_model=NoveltyResponse)
 # def analyze_novelty(request: NoveltyRequest):
-#     """Novelty Scorer — literature search, novelty estimation."""
+#     """Novelty Scorer â€” literature search, novelty estimation."""
 #     try:
 #         r         = _novelty_engine.analyze(_smart_text(request.text, "novelty", per_section_limit=2000), request.title)
 #         raw_flags = getattr(r, 'flags', []) or []
@@ -1918,7 +1918,7 @@
 
 # @router.post("/analyze/grim", response_model=GrimResponse)
 # def analyze_grim(request: GrimRequest):
-#     """GRIM Test — mathematically impossible means."""
+#     """GRIM Test â€” mathematically impossible means."""
 #     try:
 #         r = _grim_engine.analyze(_smart_text(request.text, "grim"))
 #         return GrimResponse(impossible_means=r.impossible_means, possible_means=r.possible_means, grim_score=r.grim_score, risk_level=r.risk_level, summary=r.summary, flags=[GrimFlagResponse(flag_type=f.flag_type, severity=f.severity, description=f.description, evidence=f.evidence, suggestion=f.suggestion) for f in r.flags], flags_count=r.flags_count)
@@ -1928,7 +1928,7 @@
 
 # @router.post("/analyze/sprite", response_model=SpriteResponse)
 # def analyze_sprite(request: SpriteRequest):
-#     """SPRITE Test — impossible distributions."""
+#     """SPRITE Test â€” impossible distributions."""
 #     try:
 #         r = _sprite_engine.analyze(_smart_text(request.text, "sprite"))
 #         return SpriteResponse(impossible_combinations=r.impossible_combinations, possible_combinations=r.possible_combinations, sprite_score=r.sprite_score, risk_level=r.risk_level, summary=r.summary, flags=[SpriteFlagResponse(flag_type=f.flag_type, severity=f.severity, description=f.description, evidence=f.evidence, suggestion=f.suggestion) for f in r.flags], flags_count=r.flags_count)
@@ -1938,7 +1938,7 @@
 
 # @router.post("/analyze/granularity", response_model=GranularityResponse)
 # def analyze_granularity(request: GranularityRequest):
-#     """Granularity Analyzer — Benford Law, digit preference."""
+#     """Granularity Analyzer â€” Benford Law, digit preference."""
 #     try:
 #         r = _granularity_engine.analyze(_smart_text(request.text, "granularity"))
 #         return GranularityResponse(digit_preference_score=r.digit_preference_score, benford_score=r.benford_score, round_number_ratio=r.round_number_ratio, granularity_score=r.granularity_score, risk_level=r.risk_level, summary=r.summary, flags=[GranularityFlagResponse(flag_type=f.flag_type, severity=f.severity, description=f.description, evidence=f.evidence, suggestion=f.suggestion) for f in r.flags], flags_count=r.flags_count)
@@ -1948,7 +1948,7 @@
 
 # @router.post("/analyze/pcurve", response_model=PCurveResponse)
 # def analyze_pcurve(request: PCurveRequest):
-#     """P-Curve Analyzer — publication bias detector."""
+#     """P-Curve Analyzer â€” publication bias detector."""
 #     try:
 #         r = _pcurve_engine.analyze(_smart_text(request.text, "pcurve"))
 #         return PCurveResponse(p_values_found=r.p_values_found, significant_p=r.significant_p, right_skew_ratio=r.right_skew_ratio, clustering_score=r.clustering_score, pcurve_score=r.pcurve_score, risk_level=r.risk_level, summary=r.summary, flags=[PCurveFlagResponse(flag_type=f.flag_type, severity=f.severity, description=f.description, evidence=f.evidence, suggestion=f.suggestion) for f in r.flags], flags_count=r.flags_count)
@@ -1958,7 +1958,7 @@
 
 # @router.post("/analyze/effect_size", response_model=EffectSizeResponse)
 # def analyze_effect_size(request: EffectSizeRequest):
-#     """Effect Size Validator — Cohen d, power analysis."""
+#     """Effect Size Validator â€” Cohen d, power analysis."""
 #     try:
 #         r = _effect_size_engine.analyze(_smart_text(request.text, "effect_size"))
 #         return EffectSizeResponse(effect_sizes_found=r.effect_sizes_found, power_estimates=r.power_estimates, inflated_effects=r.inflated_effects, underpowered=r.underpowered, effect_score=r.effect_score, risk_level=r.risk_level, summary=r.summary, flags=[EffectSizeFlagResponse(flag_type=f.flag_type, severity=f.severity, description=f.description, evidence=f.evidence, suggestion=f.suggestion) for f in r.flags], flags_count=r.flags_count)
@@ -1968,7 +1968,7 @@
 
 # @router.post("/analyze/retraction", response_model=RetractionResponse)
 # def analyze_retraction(request: RetractionRequest):
-#     """Retraction Checker — live CrossRef API."""
+#     """Retraction Checker â€” live CrossRef API."""
 #     try:
 #         r = _retraction_engine.analyze(_smart_text(request.text, "retraction"))
 #         return RetractionResponse(dois_found=r.dois_found, retracted_found=r.retracted_found, checked_count=r.checked_count, retraction_score=r.retraction_score, risk_level=r.risk_level, summary=r.summary, flags=[RetractionFlagResponse(flag_type=f.flag_type, severity=f.severity, description=f.description, evidence=f.evidence, suggestion=f.suggestion) for f in r.flags], flags_count=r.flags_count)
@@ -1978,7 +1978,7 @@
 
 # @router.post("/analyze/cartel", response_model=CartelResponse)
 # def analyze_cartel(request: CartelRequest):
-#     """Citation Cartel Detector — graph-based ring detection."""
+#     """Citation Cartel Detector â€” graph-based ring detection."""
 #     try:
 #         r = _cartel_engine.analyze(_smart_text(request.text, "cartel"))
 #         return CartelResponse(authors_found=r.authors_found, citation_network=r.citation_network, cartel_score=r.cartel_score, self_citation_ratio=r.self_citation_ratio, network_diversity=r.network_diversity, risk_level=r.risk_level, summary=r.summary, flags=[CartelFlagResponse(flag_type=f.flag_type, severity=f.severity, description=f.description, evidence=f.evidence, suggestion=f.suggestion) for f in r.flags], flags_count=r.flags_count)
@@ -1988,7 +1988,7 @@
 
 # @router.post("/analyze/llm", response_model=LLMResponse)
 # def analyze_llm(request: LLMRequest):
-#     """LLM Detector — burstiness, TTR, phrase patterns."""
+#     """LLM Detector â€” burstiness, TTR, phrase patterns."""
 #     try:
 #         r = _llm_engine.analyze(_smart_text(request.text, "llm"))
 #         return LLMResponse(burstiness_score=r.burstiness_score, vocabulary_diversity=r.vocabulary_diversity, sentence_uniformity=r.sentence_uniformity, llm_phrase_count=r.llm_phrase_count, llm_score=r.llm_score, risk_level=r.risk_level, summary=r.summary, flags=[LLMFlagResponse(flag_type=f.flag_type, severity=f.severity, description=f.description, evidence=f.evidence, suggestion=f.suggestion) for f in r.flags], flags_count=r.flags_count)
@@ -1996,11 +1996,11 @@
 #         raise HTTPException(status_code=500, detail=str(e))
 
 
-# # ── Phase 5 endpoints ─────────────────────────────────────────────────────────
+# # â”€â”€ Phase 5 endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 # @router.post("/analyze/fraud_fingerprint", response_model=FraudFingerprintResponse)
 # def analyze_fraud_fingerprint(request: TextAnalysisRequest):
-#     """Fraud Fingerprinting — writing DNA inconsistency detection."""
+#     """Fraud Fingerprinting â€” writing DNA inconsistency detection."""
 #     try:
 #         r = _fraud_engine.analyze(_smart_text(request.text, "fraud_fingerprint"))
 #         return FraudFingerprintResponse(
@@ -2020,7 +2020,7 @@
 
 # @router.post("/analyze/temporal_anomaly", response_model=TemporalAnomalyResponse)
 # def analyze_temporal_anomaly(request: TextAnalysisRequest):
-#     """Temporal Anomaly — citation timeline paradox detection."""
+#     """Temporal Anomaly â€” citation timeline paradox detection."""
 #     try:
 #         r = _temporal_engine.analyze(_smart_text(request.text, "temporal"))
 #         return TemporalAnomalyResponse(
@@ -2041,7 +2041,7 @@
 
 # @router.post("/analyze/citation_dna", response_model=CitationDNAResponse)
 # def analyze_citation_dna(request: TextAnalysisRequest):
-#     """Citation DNA — network concentration and diversity analysis."""
+#     """Citation DNA â€” network concentration and diversity analysis."""
 #     try:
 #         r = _dna_engine.analyze(_smart_text(request.text, "citation_dna"))
 #         return CitationDNAResponse(
@@ -2064,7 +2064,7 @@
 
 # @router.post("/analyze/data_fingerprint", response_model=DataFingerprintResponse)
 # def analyze_data_fingerprint(request: TextAnalysisRequest):
-#     """Data Fingerprinting — fabrication and numerical cloning detection."""
+#     """Data Fingerprinting â€” fabrication and numerical cloning detection."""
 #     try:
 #         r = _dataprint_engine.analyze(_smart_text(request.text, "data_fingerprint"))
 #         return DataFingerprintResponse(
@@ -2085,7 +2085,7 @@
 
 # @router.post("/analyze/peer_review", response_model=PeerReviewResponse)
 # def analyze_peer_review(request: TextAnalysisRequest):
-#     """Peer Review Score — process manipulation detection."""
+#     """Peer Review Score â€” process manipulation detection."""
 #     try:
 #         r = _peerreview_engine.analyze(_smart_text(request.text, "peer_review"))
 #         return PeerReviewResponse(
@@ -2107,7 +2107,7 @@
 
 # @router.post("/analyze/ai_spectrum", response_model=AISpectrumResponse)
 # def analyze_ai_spectrum(request: TextAnalysisRequest):
-#     """AI-Human Spectrum — model attribution and ratio analysis."""
+#     """AI-Human Spectrum â€” model attribution and ratio analysis."""
 #     try:
 #         r = _spectrum_engine.analyze(_smart_text(request.text, "ai_spectrum"))
 #         return AISpectrumResponse(
@@ -2130,12 +2130,12 @@
 #         raise HTTPException(status_code=500, detail=str(e))
 
 
-# # ── Replication Predictor endpoint ────────────────────────────────────────────
+# # â”€â”€ Replication Predictor endpoint â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 # @router.post("/analyze/replication", response_model=ReplicationResponse)
 # def analyze_replication(request: TextAnalysisRequest):
 #     """
-#     Replication Probability Score — ML-based replication likelihood prediction.
+#     Replication Probability Score â€” ML-based replication likelihood prediction.
 #     Runs all integrity signals through a trained LogisticRegression model
 #     and returns the probability that this paper is replicable.
 #     """
@@ -2285,12 +2285,12 @@
 #         raise HTTPException(status_code=500, detail=str(e))
 
 
-# # ── Full PDF — 21-Module Master Endpoint ─────────────────────────────────────
+# # â”€â”€ Full PDF â€” 21-Module Master Endpoint â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 # @router.post("/analyze/full-pdf", response_model=FullPDFResponse)
 # async def analyze_full_pdf(file: UploadFile = File(...)):
 #     """
-#     Master endpoint — Upload a PDF and run all 21 analysis modules at once.
+#     Master endpoint â€” Upload a PDF and run all 21 analysis modules at once.
 #     Returns a unified integrity report with per-module scores, top flags,
 #     and an ML-based replication probability prediction.
 #     Designed for PhD researchers, journal editors, and integrity committees.
@@ -2312,7 +2312,7 @@
 #         scores         = []
 #         module_scores: dict = {}
 
-#         # ── Module 01: Statistical Audit ──────────────────────────
+#         # â”€â”€ Module 01: Statistical Audit â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _stat_engine.analyze(_smart_text(text, "statistics"))
 #             modules_run.append(ModuleSummary(module="Statistical Audit", risk_level=r.risk_level, risk_score=r.risk_score, summary=r.summary, flags_count=len(r.flags)))
@@ -2321,7 +2321,7 @@
 #             for f in r.flags[:2]: top_flags.append(f"[Statistics] {f.description}")
 #         except Exception: pass
 
-#         # ── Module 02: Methodology Checker ────────────────────────
+#         # â”€â”€ Module 02: Methodology Checker â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             abstract = paper.sections.get("abstract", "")
 #             r = _method_engine.analyze(_smart_text(text, "methodology"), abstract)
@@ -2332,7 +2332,7 @@
 #             for f in r.flags[:2]: top_flags.append(f"[Methodology] {f.issue}")
 #         except Exception: pass
 
-#         # ── Module 03: Citation Integrity ─────────────────────────
+#         # â”€â”€ Module 03: Citation Integrity â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _citation_engine.analyze(_smart_text(text, "citations"), "")
 #             modules_run.append(ModuleSummary(module="Citation Integrity", risk_level=r.risk_level, risk_score=r.risk_score, summary=r.summary, flags_count=len(r.flags)))
@@ -2341,7 +2341,7 @@
 #             for f in r.flags[:2]: top_flags.append(f"[Citations] {f.description}")
 #         except Exception: pass
 
-#         # ── Module 04: Reproducibility ────────────────────────────
+#         # â”€â”€ Module 04: Reproducibility â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _repro_engine.analyze(_smart_text(text, "reproducibility"))
 #             repro_risk = round(1.0 - r.reproducibility_score, 4)
@@ -2351,7 +2351,7 @@
 #             for f in r.flags[:1]: top_flags.append(f"[Reproducibility] {f.description}")
 #         except Exception: pass
 
-#         # ── Module 05: Novelty ────────────────────────────────────
+#         # â”€â”€ Module 05: Novelty â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _novelty_engine.analyze(_smart_text(text, "novelty", per_section_limit=2000), paper.title)
 #             novelty_risk = getattr(r, "risk_score", round(1.0 - r.novelty_score, 4))
@@ -2360,7 +2360,7 @@
 #             module_scores["score_novelty"] = novelty_risk
 #         except Exception: pass
 
-#         # ── Module 06: GRIM Test ──────────────────────────────────
+#         # â”€â”€ Module 06: GRIM Test â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _grim_engine.analyze(_smart_text(text, "grim"))
 #             modules_run.append(ModuleSummary(module="GRIM Test", risk_level=r.risk_level, risk_score=r.grim_score, summary=r.summary, flags_count=r.flags_count))
@@ -2369,7 +2369,7 @@
 #             for f in r.flags[:1]: top_flags.append(f"[GRIM] {f.description}")
 #         except Exception: pass
 
-#         # ── Module 07: SPRITE Test ────────────────────────────────
+#         # â”€â”€ Module 07: SPRITE Test â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _sprite_engine.analyze(_smart_text(text, "sprite"))
 #             modules_run.append(ModuleSummary(module="SPRITE Test", risk_level=r.risk_level, risk_score=r.sprite_score, summary=r.summary, flags_count=r.flags_count))
@@ -2377,7 +2377,7 @@
 #             module_scores["score_sprite"] = r.sprite_score
 #         except Exception: pass
 
-#         # ── Module 08: Granularity ────────────────────────────────
+#         # â”€â”€ Module 08: Granularity â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _granularity_engine.analyze(_smart_text(text, "granularity"))
 #             modules_run.append(ModuleSummary(module="Granularity Analyzer", risk_level=r.risk_level, risk_score=r.granularity_score, summary=r.summary, flags_count=r.flags_count))
@@ -2385,7 +2385,7 @@
 #             module_scores["score_granularity"] = r.granularity_score
 #         except Exception: pass
 
-#         # ── Module 09: P-Curve ────────────────────────────────────
+#         # â”€â”€ Module 09: P-Curve â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _pcurve_engine.analyze(_smart_text(text, "pcurve"))
 #             modules_run.append(ModuleSummary(module="P-Curve Analyzer", risk_level=r.risk_level, risk_score=r.pcurve_score, summary=r.summary, flags_count=r.flags_count))
@@ -2394,7 +2394,7 @@
 #             for f in r.flags[:1]: top_flags.append(f"[P-Curve] {f.description}")
 #         except Exception: pass
 
-#         # ── Module 10: Effect Size ────────────────────────────────
+#         # â”€â”€ Module 10: Effect Size â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _effect_size_engine.analyze(_smart_text(text, "effect_size"))
 #             modules_run.append(ModuleSummary(module="Effect Size Validator", risk_level=r.risk_level, risk_score=r.effect_score, summary=r.summary, flags_count=r.flags_count))
@@ -2402,7 +2402,7 @@
 #             module_scores["score_effect"] = r.effect_score
 #         except Exception: pass
 
-#         # ── Module 11: Retraction Checker ─────────────────────────
+#         # â”€â”€ Module 11: Retraction Checker â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _retraction_engine.analyze(_smart_text(text, "retraction"))
 #             modules_run.append(ModuleSummary(module="Retraction Checker", risk_level=r.risk_level, risk_score=r.retraction_score, summary=r.summary, flags_count=r.flags_count))
@@ -2411,7 +2411,7 @@
 #             for f in r.flags[:1]: top_flags.append(f"[Retraction] {f.description}")
 #         except Exception: pass
 
-#         # ── Module 12: Citation Cartel ────────────────────────────
+#         # â”€â”€ Module 12: Citation Cartel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _cartel_engine.analyze(_smart_text(text, "cartel"))
 #             modules_run.append(ModuleSummary(module="Citation Cartel Detector", risk_level=r.risk_level, risk_score=r.cartel_score, summary=r.summary, flags_count=r.flags_count))
@@ -2420,7 +2420,7 @@
 #             for f in r.flags[:1]: top_flags.append(f"[Cartel] {f.description}")
 #         except Exception: pass
 
-#         # ── Module 13: LLM Detector ───────────────────────────────
+#         # â”€â”€ Module 13: LLM Detector â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _llm_engine.analyze(_smart_text(text, "llm"))
 #             modules_run.append(ModuleSummary(module="LLM Paper Detector", risk_level=r.risk_level, risk_score=r.llm_score, summary=r.summary, flags_count=r.flags_count))
@@ -2429,7 +2429,7 @@
 #             for f in r.flags[:1]: top_flags.append(f"[LLM] {f.description}")
 #         except Exception: pass
 
-#         # ── Module 14: Figure Forensics ───────────────────────────
+#         # â”€â”€ Module 14: Figure Forensics â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             tmp_path = None
 #             with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
@@ -2442,7 +2442,7 @@
 #             if tmp_path and os.path.exists(tmp_path): os.unlink(tmp_path)
 #         except Exception: pass
 
-#         # ── Module 15: Fraud Fingerprinting ───────────────────────
+#         # â”€â”€ Module 15: Fraud Fingerprinting â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _fraud_engine.analyze(_smart_text(text, "fraud_fingerprint"))
 #             modules_run.append(ModuleSummary(module="Fraud Fingerprinting", risk_level=r.risk_level, risk_score=r.fingerprint_score, summary=r.summary, flags_count=r.flags_count))
@@ -2451,7 +2451,7 @@
 #             for f in r.flags[:1]: top_flags.append(f"[Fingerprint] {f.description}")
 #         except Exception: pass
 
-#         # ── Module 16: Temporal Anomaly ───────────────────────────
+#         # â”€â”€ Module 16: Temporal Anomaly â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _temporal_engine.analyze(_smart_text(text, "temporal"))
 #             modules_run.append(ModuleSummary(module="Temporal Anomaly Detector", risk_level=r.risk_level, risk_score=r.temporal_score, summary=r.summary, flags_count=r.flags_count))
@@ -2460,7 +2460,7 @@
 #             for f in r.flags[:1]: top_flags.append(f"[Temporal] {f.description}")
 #         except Exception: pass
 
-#         # ── Module 17: Citation DNA ───────────────────────────────
+#         # â”€â”€ Module 17: Citation DNA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _dna_engine.analyze(_smart_text(text, "citation_dna"))
 #             modules_run.append(ModuleSummary(module="Citation DNA Analyzer", risk_level=r.risk_level, risk_score=r.dna_risk_score, summary=r.summary, flags_count=r.flags_count))
@@ -2469,7 +2469,7 @@
 #             for f in r.flags[:1]: top_flags.append(f"[CitationDNA] {f.description}")
 #         except Exception: pass
 
-#         # ── Module 18: Data Fingerprint ───────────────────────────
+#         # â”€â”€ Module 18: Data Fingerprint â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _dataprint_engine.analyze(_smart_text(text, "data_fingerprint"))
 #             modules_run.append(ModuleSummary(module="Data Fingerprint Analyzer", risk_level=r.risk_level, risk_score=r.fingerprint_score, summary=r.summary, flags_count=r.flags_count))
@@ -2478,7 +2478,7 @@
 #             for f in r.flags[:1]: top_flags.append(f"[DataFingerprint] {f.description}")
 #         except Exception: pass
 
-#         # ── Module 19: Peer Review Score ──────────────────────────
+#         # â”€â”€ Module 19: Peer Review Score â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _peerreview_engine.analyze(_smart_text(text, "peer_review"))
 #             modules_run.append(ModuleSummary(module="Peer Review Score", risk_level=r.risk_level, risk_score=r.manipulation_score, summary=r.summary, flags_count=r.flags_count))
@@ -2487,7 +2487,7 @@
 #             for f in r.flags[:1]: top_flags.append(f"[PeerReview] {f.description}")
 #         except Exception: pass
 
-#         # ── Module 20: AI-Human Spectrum ──────────────────────────
+#         # â”€â”€ Module 20: AI-Human Spectrum â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _spectrum_engine.analyze(_smart_text(text, "ai_spectrum"))
 #             modules_run.append(ModuleSummary(module="AI-Human Spectrum", risk_level=r.risk_level, risk_score=r.spectrum_score, summary=r.summary, flags_count=r.flags_count))
@@ -2496,7 +2496,7 @@
 #             for f in r.flags[:1]: top_flags.append(f"[AISpectrum] {f.description}")
 #         except Exception: pass
 
-#         # ── Module 21: Replication Probability Score ──────────────
+#         # â”€â”€ Module 21: Replication Probability Score â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         replication_probability = 0.5
 #         replication_level       = "UNKNOWN"
 #         try:
@@ -2515,7 +2515,7 @@
 #                 top_flags.append(f"[Replication] {rep.verdict}")
 #         except Exception: pass
 
-#         # ── Final Score ───────────────────────────────────────────
+#         # â”€â”€ Final Score â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         overall_score, overall_risk = _compute_overall(scores)
 
 #         return FullPDFResponse(
@@ -2531,7 +2531,7 @@
 #             replication_level       = replication_level,
 #             modules                 = modules_run,
 #             top_flags               = top_flags[:10],
-#             analyzed_by             = "SciPeerAI v2.1.0 — 21-Module Pipeline",
+#             analyzed_by             = "SciPeerAI v2.1.0 â€” 21-Module Pipeline",
 #         )
 
 #     except HTTPException:
@@ -2580,7 +2580,7 @@
 
 # router = APIRouter(prefix="/api/v1", tags=["Analysis"])
 
-# # ── Section-aware text routing ────────────────────────────────────────────────
+# # â”€â”€ Section-aware text routing â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 # _SECTION_MARKERS = [
 #     "abstract", "introduction", "background", "related work",
@@ -2701,7 +2701,7 @@
 #     return text[:limit]
 
 
-# # ── Engine initialization ─────────────────────────────────────────────────────
+# # â”€â”€ Engine initialization â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 # _stat_engine        = StatAuditEngine()
 # _figure_engine      = FigureForensicsEngine()
@@ -2727,7 +2727,7 @@
 # _pdf_parser         = PDFParser()
 
 
-# # ── Shared response models ────────────────────────────────────────────────────
+# # â”€â”€ Shared response models â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 # class TextAnalysisRequest(BaseModel):
 #     text: str = Field(..., min_length=50, description="Paper text to analyze")
@@ -2931,7 +2931,7 @@
 #     llm_phrase_count: int; llm_score: float; risk_level: str; summary: str
 #     flags: list[LLMFlagResponse]; flags_count: int
 
-# # ── Phase 5 models ────────────────────────────────────────────────────────────
+# # â”€â”€ Phase 5 models â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 # class Phase5FlagResponse(BaseModel):
 #     flag_type:   str
@@ -3018,7 +3018,7 @@
 #     flags:                list[Phase5FlagResponse]
 #     flags_count:          int
 
-# # ── Replication Predictor models ──────────────────────────────────────────────
+# # â”€â”€ Replication Predictor models â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 # class ReplicationRequest(BaseModel):
 #     text: str = Field(..., min_length=50, description="Paper text to analyze for replication probability")
@@ -3042,7 +3042,7 @@
 #     flags_count:             int
 #     model_version:           str
 
-# # ── Phase 6 models ────────────────────────────────────────────────────────────
+# # â”€â”€ Phase 6 models â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 # class GenealogyResponse(BaseModel):
 #     doi_count:               int
@@ -3059,7 +3059,7 @@
 #     flags:                   list[Phase5FlagResponse]
 #     flags_count:             int
 
-# # ── Full PDF models ───────────────────────────────────────────────────────────
+# # â”€â”€ Full PDF models â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 # class ModuleSummary(BaseModel):
 #     module:      str
@@ -3084,7 +3084,7 @@
 #     analyzed_by:             str
 
 
-# # ── Helpers ───────────────────────────────────────────────────────────────────
+# # â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 # def _compute_overall(scores: list[float]) -> tuple[float, str]:
 #     avg = round(sum(scores) / len(scores), 3) if scores else 0.0
@@ -3114,7 +3114,7 @@
 #     ]
 
 
-# # ── Status ────────────────────────────────────────────────────────────────────
+# # â”€â”€ Status â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 # @router.get("/status")
 # def system_status():
@@ -3148,16 +3148,16 @@
 #         "tests_passing":   209,
 #         "text_extraction": "section-aware",
 #         "ml_ensemble":     "LightGBM+XGBoost+RF+LR",
-#         "benchmark":       "SciPeerBench v2.0 — 91,779 papers",
+#         "benchmark":       "SciPeerBench v2.0 â€” 91,779 papers",
 #         "ensemble_auc":    0.895,
 #     }
 
 
-# # ── Original 14 endpoints ─────────────────────────────────────────────────────
+# # â”€â”€ Original 14 endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 # @router.post("/analyze/statistics", response_model=StatAuditResponse)
 # def analyze_statistics(request: TextAnalysisRequest):
-#     """Statistical Audit — p-hacking, sample size, round numbers."""
+#     """Statistical Audit â€” p-hacking, sample size, round numbers."""
 #     try:
 #         r = _stat_engine.analyze(_smart_text(request.text, "statistics"))
 #         return StatAuditResponse(
@@ -3175,7 +3175,7 @@
 
 # @router.post("/analyze/figures", response_model=FigureForensicsResponse)
 # async def analyze_figures(file: UploadFile = File(...)):
-#     """Figure Forensics — duplicate image detection."""
+#     """Figure Forensics â€” duplicate image detection."""
 #     if not file.filename.endswith(".pdf"):
 #         raise HTTPException(status_code=400, detail="Only PDF files accepted.")
 #     tmp_path = None
@@ -3201,7 +3201,7 @@
 
 # @router.post("/analyze/methodology", response_model=MethodologyResponse)
 # def analyze_methodology(request: MethodologyRequest):
-#     """Methodology Checker — causation, control groups, timeframe."""
+#     """Methodology Checker â€” causation, control groups, timeframe."""
 #     try:
 #         r = _method_engine.analyze(_smart_text(request.text, "methodology"), request.abstract)
 #         return MethodologyResponse(
@@ -3217,7 +3217,7 @@
 
 # @router.post("/analyze/citations", response_model=CitationResponse)
 # def analyze_citations(request: CitationRequest):
-#     """Citation Integrity — self-citation, unsupported claims."""
+#     """Citation Integrity â€” self-citation, unsupported claims."""
 #     try:
 #         r = _citation_engine.analyze(_smart_text(request.text, "citations"), request.author_name)
 #         return CitationResponse(
@@ -3237,7 +3237,7 @@
 
 # @router.post("/analyze/reproducibility", response_model=ReproducibilityResponse)
 # def analyze_reproducibility(request: ReproducibilityRequest):
-#     """Reproducibility Scanner — code, data, ethics, preregistration."""
+#     """Reproducibility Scanner â€” code, data, ethics, preregistration."""
 #     try:
 #         r = _repro_engine.analyze(_smart_text(request.text, "reproducibility"))
 #         return ReproducibilityResponse(
@@ -3258,7 +3258,7 @@
 
 # @router.post("/analyze/novelty", response_model=NoveltyResponse)
 # def analyze_novelty(request: NoveltyRequest):
-#     """Novelty Scorer — literature search, novelty estimation."""
+#     """Novelty Scorer â€” literature search, novelty estimation."""
 #     try:
 #         r         = _novelty_engine.analyze(_smart_text(request.text, "novelty", per_section_limit=2000), request.title)
 #         raw_flags = getattr(r, 'flags', []) or []
@@ -3280,7 +3280,7 @@
 
 # @router.post("/analyze/grim", response_model=GrimResponse)
 # def analyze_grim(request: GrimRequest):
-#     """GRIM Test — mathematically impossible means."""
+#     """GRIM Test â€” mathematically impossible means."""
 #     try:
 #         r = _grim_engine.analyze(_smart_text(request.text, "grim"))
 #         return GrimResponse(impossible_means=r.impossible_means, possible_means=r.possible_means, grim_score=r.grim_score, risk_level=r.risk_level, summary=r.summary, flags=[GrimFlagResponse(flag_type=f.flag_type, severity=f.severity, description=f.description, evidence=f.evidence, suggestion=f.suggestion) for f in r.flags], flags_count=r.flags_count)
@@ -3290,7 +3290,7 @@
 
 # @router.post("/analyze/sprite", response_model=SpriteResponse)
 # def analyze_sprite(request: SpriteRequest):
-#     """SPRITE Test — impossible distributions."""
+#     """SPRITE Test â€” impossible distributions."""
 #     try:
 #         r = _sprite_engine.analyze(_smart_text(request.text, "sprite"))
 #         return SpriteResponse(impossible_combinations=r.impossible_combinations, possible_combinations=r.possible_combinations, sprite_score=r.sprite_score, risk_level=r.risk_level, summary=r.summary, flags=[SpriteFlagResponse(flag_type=f.flag_type, severity=f.severity, description=f.description, evidence=f.evidence, suggestion=f.suggestion) for f in r.flags], flags_count=r.flags_count)
@@ -3300,7 +3300,7 @@
 
 # @router.post("/analyze/granularity", response_model=GranularityResponse)
 # def analyze_granularity(request: GranularityRequest):
-#     """Granularity Analyzer — Benford Law, digit preference."""
+#     """Granularity Analyzer â€” Benford Law, digit preference."""
 #     try:
 #         r = _granularity_engine.analyze(_smart_text(request.text, "granularity"))
 #         return GranularityResponse(digit_preference_score=r.digit_preference_score, benford_score=r.benford_score, round_number_ratio=r.round_number_ratio, granularity_score=r.granularity_score, risk_level=r.risk_level, summary=r.summary, flags=[GranularityFlagResponse(flag_type=f.flag_type, severity=f.severity, description=f.description, evidence=f.evidence, suggestion=f.suggestion) for f in r.flags], flags_count=r.flags_count)
@@ -3310,7 +3310,7 @@
 
 # @router.post("/analyze/pcurve", response_model=PCurveResponse)
 # def analyze_pcurve(request: PCurveRequest):
-#     """P-Curve Analyzer — publication bias detector."""
+#     """P-Curve Analyzer â€” publication bias detector."""
 #     try:
 #         r = _pcurve_engine.analyze(_smart_text(request.text, "pcurve"))
 #         return PCurveResponse(p_values_found=r.p_values_found, significant_p=r.significant_p, right_skew_ratio=r.right_skew_ratio, clustering_score=r.clustering_score, pcurve_score=r.pcurve_score, risk_level=r.risk_level, summary=r.summary, flags=[PCurveFlagResponse(flag_type=f.flag_type, severity=f.severity, description=f.description, evidence=f.evidence, suggestion=f.suggestion) for f in r.flags], flags_count=r.flags_count)
@@ -3320,7 +3320,7 @@
 
 # @router.post("/analyze/effect_size", response_model=EffectSizeResponse)
 # def analyze_effect_size(request: EffectSizeRequest):
-#     """Effect Size Validator — Cohen d, power analysis."""
+#     """Effect Size Validator â€” Cohen d, power analysis."""
 #     try:
 #         r = _effect_size_engine.analyze(_smart_text(request.text, "effect_size"))
 #         return EffectSizeResponse(effect_sizes_found=r.effect_sizes_found, power_estimates=r.power_estimates, inflated_effects=r.inflated_effects, underpowered=r.underpowered, effect_score=r.effect_score, risk_level=r.risk_level, summary=r.summary, flags=[EffectSizeFlagResponse(flag_type=f.flag_type, severity=f.severity, description=f.description, evidence=f.evidence, suggestion=f.suggestion) for f in r.flags], flags_count=r.flags_count)
@@ -3330,7 +3330,7 @@
 
 # @router.post("/analyze/retraction", response_model=RetractionResponse)
 # def analyze_retraction(request: RetractionRequest):
-#     """Retraction Checker — live CrossRef API."""
+#     """Retraction Checker â€” live CrossRef API."""
 #     try:
 #         r = _retraction_engine.analyze(_smart_text(request.text, "retraction"))
 #         return RetractionResponse(dois_found=r.dois_found, retracted_found=r.retracted_found, checked_count=r.checked_count, retraction_score=r.retraction_score, risk_level=r.risk_level, summary=r.summary, flags=[RetractionFlagResponse(flag_type=f.flag_type, severity=f.severity, description=f.description, evidence=f.evidence, suggestion=f.suggestion) for f in r.flags], flags_count=r.flags_count)
@@ -3340,7 +3340,7 @@
 
 # @router.post("/analyze/cartel", response_model=CartelResponse)
 # def analyze_cartel(request: CartelRequest):
-#     """Citation Cartel Detector — graph-based ring detection."""
+#     """Citation Cartel Detector â€” graph-based ring detection."""
 #     try:
 #         r = _cartel_engine.analyze(_smart_text(request.text, "cartel"))
 #         return CartelResponse(authors_found=r.authors_found, citation_network=r.citation_network, cartel_score=r.cartel_score, self_citation_ratio=r.self_citation_ratio, network_diversity=r.network_diversity, risk_level=r.risk_level, summary=r.summary, flags=[CartelFlagResponse(flag_type=f.flag_type, severity=f.severity, description=f.description, evidence=f.evidence, suggestion=f.suggestion) for f in r.flags], flags_count=r.flags_count)
@@ -3350,7 +3350,7 @@
 
 # @router.post("/analyze/llm", response_model=LLMResponse)
 # def analyze_llm(request: LLMRequest):
-#     """LLM Detector — burstiness, TTR, phrase patterns."""
+#     """LLM Detector â€” burstiness, TTR, phrase patterns."""
 #     try:
 #         r = _llm_engine.analyze(_smart_text(request.text, "llm"))
 #         return LLMResponse(burstiness_score=r.burstiness_score, vocabulary_diversity=r.vocabulary_diversity, sentence_uniformity=r.sentence_uniformity, llm_phrase_count=r.llm_phrase_count, llm_score=r.llm_score, risk_level=r.risk_level, summary=r.summary, flags=[LLMFlagResponse(flag_type=f.flag_type, severity=f.severity, description=f.description, evidence=f.evidence, suggestion=f.suggestion) for f in r.flags], flags_count=r.flags_count)
@@ -3358,11 +3358,11 @@
 #         raise HTTPException(status_code=500, detail=str(e))
 
 
-# # ── Phase 5 endpoints ─────────────────────────────────────────────────────────
+# # â”€â”€ Phase 5 endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 # @router.post("/analyze/fraud_fingerprint", response_model=FraudFingerprintResponse)
 # def analyze_fraud_fingerprint(request: TextAnalysisRequest):
-#     """Fraud Fingerprinting — writing DNA inconsistency detection."""
+#     """Fraud Fingerprinting â€” writing DNA inconsistency detection."""
 #     try:
 #         r = _fraud_engine.analyze(_smart_text(request.text, "fraud_fingerprint"))
 #         return FraudFingerprintResponse(
@@ -3382,7 +3382,7 @@
 
 # @router.post("/analyze/temporal_anomaly", response_model=TemporalAnomalyResponse)
 # def analyze_temporal_anomaly(request: TextAnalysisRequest):
-#     """Temporal Anomaly — citation timeline paradox detection."""
+#     """Temporal Anomaly â€” citation timeline paradox detection."""
 #     try:
 #         r = _temporal_engine.analyze(_smart_text(request.text, "temporal"))
 #         return TemporalAnomalyResponse(
@@ -3403,7 +3403,7 @@
 
 # @router.post("/analyze/citation_dna", response_model=CitationDNAResponse)
 # def analyze_citation_dna(request: TextAnalysisRequest):
-#     """Citation DNA — network concentration and diversity analysis."""
+#     """Citation DNA â€” network concentration and diversity analysis."""
 #     try:
 #         r = _dna_engine.analyze(_smart_text(request.text, "citation_dna"))
 #         return CitationDNAResponse(
@@ -3426,7 +3426,7 @@
 
 # @router.post("/analyze/data_fingerprint", response_model=DataFingerprintResponse)
 # def analyze_data_fingerprint(request: TextAnalysisRequest):
-#     """Data Fingerprinting — fabrication and numerical cloning detection."""
+#     """Data Fingerprinting â€” fabrication and numerical cloning detection."""
 #     try:
 #         r = _dataprint_engine.analyze(_smart_text(request.text, "data_fingerprint"))
 #         return DataFingerprintResponse(
@@ -3447,7 +3447,7 @@
 
 # @router.post("/analyze/peer_review", response_model=PeerReviewResponse)
 # def analyze_peer_review(request: TextAnalysisRequest):
-#     """Peer Review Score — process manipulation detection."""
+#     """Peer Review Score â€” process manipulation detection."""
 #     try:
 #         r = _peerreview_engine.analyze(_smart_text(request.text, "peer_review"))
 #         return PeerReviewResponse(
@@ -3469,7 +3469,7 @@
 
 # @router.post("/analyze/ai_spectrum", response_model=AISpectrumResponse)
 # def analyze_ai_spectrum(request: TextAnalysisRequest):
-#     """AI-Human Spectrum — model attribution and ratio analysis."""
+#     """AI-Human Spectrum â€” model attribution and ratio analysis."""
 #     try:
 #         r = _spectrum_engine.analyze(_smart_text(request.text, "ai_spectrum"))
 #         return AISpectrumResponse(
@@ -3492,12 +3492,12 @@
 #         raise HTTPException(status_code=500, detail=str(e))
 
 
-# # ── Replication Predictor endpoint ────────────────────────────────────────────
+# # â”€â”€ Replication Predictor endpoint â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 # @router.post("/analyze/replication", response_model=ReplicationResponse)
 # def analyze_replication(request: TextAnalysisRequest):
 #     """
-#     Replication Probability Score — ML ensemble replication likelihood prediction.
+#     Replication Probability Score â€” ML ensemble replication likelihood prediction.
 #     Uses LightGBM + XGBoost + RandomForest + LogisticRegression trained on
 #     SciPeerBench v2.0 (91,779 papers). Ensemble AUC: 0.895.
 #     """
@@ -3646,14 +3646,14 @@
 #         raise HTTPException(status_code=500, detail=str(e))
 
 
-# # ── Phase 6 endpoints ─────────────────────────────────────────────────────────
+# # â”€â”€ Phase 6 endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 # @router.post("/analyze/genealogy", response_model=GenealogyResponse)
 # def analyze_genealogy(request: TextAnalysisRequest):
 #     """
-#     Research Genealogy Engine — citation ancestry tracing, ring network
+#     Research Genealogy Engine â€” citation ancestry tracing, ring network
 #     detection, lineage concentration scoring, and retracted ancestor
-#     verification via CrossRef API. Module 22 — SciPeerAI Phase 6.
+#     verification via CrossRef API. Module 22 â€” SciPeerAI Phase 6.
 #     """
 #     try:
 #         r = _genealogy_engine.analyze(_smart_text(request.text, "genealogy"))
@@ -3676,12 +3676,12 @@
 #         raise HTTPException(status_code=500, detail=str(e))
 
 
-# # ── Full PDF — 22-Module Master Endpoint ─────────────────────────────────────
+# # â”€â”€ Full PDF â€” 22-Module Master Endpoint â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 # @router.post("/analyze/full-pdf", response_model=FullPDFResponse)
 # async def analyze_full_pdf(file: UploadFile = File(...)):
 #     """
-#     Master endpoint — Upload a PDF and run all 22 analysis modules at once.
+#     Master endpoint â€” Upload a PDF and run all 22 analysis modules at once.
 #     Returns a unified integrity report with per-module scores, top flags,
 #     and an ML ensemble replication probability score.
 #     Trained on SciPeerBench v2.0 (91,779 papers, AUC 0.895).
@@ -3704,7 +3704,7 @@
 #         scores         = []
 #         module_scores  = {}
 
-#         # ── Module 01: Statistical Audit ──────────────────────────
+#         # â”€â”€ Module 01: Statistical Audit â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _stat_engine.analyze(_smart_text(text, "statistics"))
 #             modules_run.append(ModuleSummary(module="Statistical Audit", risk_level=r.risk_level, risk_score=r.risk_score, summary=r.summary, flags_count=len(r.flags)))
@@ -3713,7 +3713,7 @@
 #             for f in r.flags[:2]: top_flags.append(f"[Statistics] {f.description}")
 #         except Exception: pass
 
-#         # ── Module 02: Methodology Checker ────────────────────────
+#         # â”€â”€ Module 02: Methodology Checker â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             abstract = paper.sections.get("abstract", "")
 #             r        = _method_engine.analyze(_smart_text(text, "methodology"), abstract)
@@ -3724,7 +3724,7 @@
 #             for f in r.flags[:2]: top_flags.append(f"[Methodology] {f.issue}")
 #         except Exception: pass
 
-#         # ── Module 03: Citation Integrity ─────────────────────────
+#         # â”€â”€ Module 03: Citation Integrity â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _citation_engine.analyze(_smart_text(text, "citations"), "")
 #             modules_run.append(ModuleSummary(module="Citation Integrity", risk_level=r.risk_level, risk_score=r.risk_score, summary=r.summary, flags_count=len(r.flags)))
@@ -3733,7 +3733,7 @@
 #             for f in r.flags[:2]: top_flags.append(f"[Citations] {f.description}")
 #         except Exception: pass
 
-#         # ── Module 04: Reproducibility ────────────────────────────
+#         # â”€â”€ Module 04: Reproducibility â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r          = _repro_engine.analyze(_smart_text(text, "reproducibility"))
 #             repro_risk = round(1.0 - r.reproducibility_score, 4)
@@ -3743,7 +3743,7 @@
 #             for f in r.flags[:1]: top_flags.append(f"[Reproducibility] {f.description}")
 #         except Exception: pass
 
-#         # ── Module 05: Novelty ────────────────────────────────────
+#         # â”€â”€ Module 05: Novelty â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r            = _novelty_engine.analyze(_smart_text(text, "novelty", per_section_limit=2000), paper.title)
 #             novelty_risk = getattr(r, "risk_score", round(1.0 - r.novelty_score, 4))
@@ -3752,7 +3752,7 @@
 #             module_scores["score_novelty"] = novelty_risk
 #         except Exception: pass
 
-#         # ── Module 06: GRIM Test ──────────────────────────────────
+#         # â”€â”€ Module 06: GRIM Test â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _grim_engine.analyze(_smart_text(text, "grim"))
 #             modules_run.append(ModuleSummary(module="GRIM Test", risk_level=r.risk_level, risk_score=r.grim_score, summary=r.summary, flags_count=r.flags_count))
@@ -3761,7 +3761,7 @@
 #             for f in r.flags[:1]: top_flags.append(f"[GRIM] {f.description}")
 #         except Exception: pass
 
-#         # ── Module 07: SPRITE Test ────────────────────────────────
+#         # â”€â”€ Module 07: SPRITE Test â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _sprite_engine.analyze(_smart_text(text, "sprite"))
 #             modules_run.append(ModuleSummary(module="SPRITE Test", risk_level=r.risk_level, risk_score=r.sprite_score, summary=r.summary, flags_count=r.flags_count))
@@ -3769,7 +3769,7 @@
 #             module_scores["score_sprite"] = r.sprite_score
 #         except Exception: pass
 
-#         # ── Module 08: Granularity ────────────────────────────────
+#         # â”€â”€ Module 08: Granularity â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _granularity_engine.analyze(_smart_text(text, "granularity"))
 #             modules_run.append(ModuleSummary(module="Granularity Analyzer", risk_level=r.risk_level, risk_score=r.granularity_score, summary=r.summary, flags_count=r.flags_count))
@@ -3777,7 +3777,7 @@
 #             module_scores["score_granularity"] = r.granularity_score
 #         except Exception: pass
 
-#         # ── Module 09: P-Curve ────────────────────────────────────
+#         # â”€â”€ Module 09: P-Curve â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _pcurve_engine.analyze(_smart_text(text, "pcurve"))
 #             modules_run.append(ModuleSummary(module="P-Curve Analyzer", risk_level=r.risk_level, risk_score=r.pcurve_score, summary=r.summary, flags_count=r.flags_count))
@@ -3786,7 +3786,7 @@
 #             for f in r.flags[:1]: top_flags.append(f"[P-Curve] {f.description}")
 #         except Exception: pass
 
-#         # ── Module 10: Effect Size ────────────────────────────────
+#         # â”€â”€ Module 10: Effect Size â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _effect_size_engine.analyze(_smart_text(text, "effect_size"))
 #             modules_run.append(ModuleSummary(module="Effect Size Validator", risk_level=r.risk_level, risk_score=r.effect_score, summary=r.summary, flags_count=r.flags_count))
@@ -3794,7 +3794,7 @@
 #             module_scores["score_effect"] = r.effect_score
 #         except Exception: pass
 
-#         # ── Module 11: Retraction Checker ─────────────────────────
+#         # â”€â”€ Module 11: Retraction Checker â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _retraction_engine.analyze(_smart_text(text, "retraction"))
 #             modules_run.append(ModuleSummary(module="Retraction Checker", risk_level=r.risk_level, risk_score=r.retraction_score, summary=r.summary, flags_count=r.flags_count))
@@ -3803,7 +3803,7 @@
 #             for f in r.flags[:1]: top_flags.append(f"[Retraction] {f.description}")
 #         except Exception: pass
 
-#         # ── Module 12: Citation Cartel ────────────────────────────
+#         # â”€â”€ Module 12: Citation Cartel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _cartel_engine.analyze(_smart_text(text, "cartel"))
 #             modules_run.append(ModuleSummary(module="Citation Cartel Detector", risk_level=r.risk_level, risk_score=r.cartel_score, summary=r.summary, flags_count=r.flags_count))
@@ -3812,7 +3812,7 @@
 #             for f in r.flags[:1]: top_flags.append(f"[Cartel] {f.description}")
 #         except Exception: pass
 
-#         # ── Module 13: LLM Detector ───────────────────────────────
+#         # â”€â”€ Module 13: LLM Detector â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _llm_engine.analyze(_smart_text(text, "llm"))
 #             modules_run.append(ModuleSummary(module="LLM Paper Detector", risk_level=r.risk_level, risk_score=r.llm_score, summary=r.summary, flags_count=r.flags_count))
@@ -3821,7 +3821,7 @@
 #             for f in r.flags[:1]: top_flags.append(f"[LLM] {f.description}")
 #         except Exception: pass
 
-#         # ── Module 14: Figure Forensics ───────────────────────────
+#         # â”€â”€ Module 14: Figure Forensics â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             tmp_path = None
 #             with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
@@ -3834,7 +3834,7 @@
 #             if tmp_path and os.path.exists(tmp_path): os.unlink(tmp_path)
 #         except Exception: pass
 
-#         # ── Module 15: Fraud Fingerprinting ───────────────────────
+#         # â”€â”€ Module 15: Fraud Fingerprinting â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _fraud_engine.analyze(_smart_text(text, "fraud_fingerprint"))
 #             modules_run.append(ModuleSummary(module="Fraud Fingerprinting", risk_level=r.risk_level, risk_score=r.fingerprint_score, summary=r.summary, flags_count=r.flags_count))
@@ -3843,7 +3843,7 @@
 #             for f in r.flags[:1]: top_flags.append(f"[Fingerprint] {f.description}")
 #         except Exception: pass
 
-#         # ── Module 16: Temporal Anomaly ───────────────────────────
+#         # â”€â”€ Module 16: Temporal Anomaly â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _temporal_engine.analyze(_smart_text(text, "temporal"))
 #             modules_run.append(ModuleSummary(module="Temporal Anomaly Detector", risk_level=r.risk_level, risk_score=r.temporal_score, summary=r.summary, flags_count=r.flags_count))
@@ -3852,7 +3852,7 @@
 #             for f in r.flags[:1]: top_flags.append(f"[Temporal] {f.description}")
 #         except Exception: pass
 
-#         # ── Module 17: Citation DNA ───────────────────────────────
+#         # â”€â”€ Module 17: Citation DNA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _dna_engine.analyze(_smart_text(text, "citation_dna"))
 #             modules_run.append(ModuleSummary(module="Citation DNA Analyzer", risk_level=r.risk_level, risk_score=r.dna_risk_score, summary=r.summary, flags_count=r.flags_count))
@@ -3861,7 +3861,7 @@
 #             for f in r.flags[:1]: top_flags.append(f"[CitationDNA] {f.description}")
 #         except Exception: pass
 
-#         # ── Module 18: Data Fingerprint ───────────────────────────
+#         # â”€â”€ Module 18: Data Fingerprint â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _dataprint_engine.analyze(_smart_text(text, "data_fingerprint"))
 #             modules_run.append(ModuleSummary(module="Data Fingerprint Analyzer", risk_level=r.risk_level, risk_score=r.fingerprint_score, summary=r.summary, flags_count=r.flags_count))
@@ -3870,7 +3870,7 @@
 #             for f in r.flags[:1]: top_flags.append(f"[DataFingerprint] {f.description}")
 #         except Exception: pass
 
-#         # ── Module 19: Peer Review Score ──────────────────────────
+#         # â”€â”€ Module 19: Peer Review Score â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _peerreview_engine.analyze(_smart_text(text, "peer_review"))
 #             modules_run.append(ModuleSummary(module="Peer Review Score", risk_level=r.risk_level, risk_score=r.manipulation_score, summary=r.summary, flags_count=r.flags_count))
@@ -3879,7 +3879,7 @@
 #             for f in r.flags[:1]: top_flags.append(f"[PeerReview] {f.description}")
 #         except Exception: pass
 
-#         # ── Module 20: AI-Human Spectrum ──────────────────────────
+#         # â”€â”€ Module 20: AI-Human Spectrum â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _spectrum_engine.analyze(_smart_text(text, "ai_spectrum"))
 #             modules_run.append(ModuleSummary(module="AI-Human Spectrum", risk_level=r.risk_level, risk_score=r.spectrum_score, summary=r.summary, flags_count=r.flags_count))
@@ -3888,7 +3888,7 @@
 #             for f in r.flags[:1]: top_flags.append(f"[AISpectrum] {f.description}")
 #         except Exception: pass
 
-#         # ── Module 21: Replication Probability Score ──────────────
+#         # â”€â”€ Module 21: Replication Probability Score â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         replication_probability = 0.5
 #         replication_level       = "UNKNOWN"
 #         try:
@@ -3907,7 +3907,7 @@
 #                 top_flags.append(f"[Replication] {rep.verdict}")
 #         except Exception: pass
 
-#         # ── Module 22: Research Genealogy Engine ──────────────────
+#         # â”€â”€ Module 22: Research Genealogy Engine â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         try:
 #             r = _genealogy_engine.analyze(_smart_text(text, "genealogy"))
 #             modules_run.append(ModuleSummary(
@@ -3928,7 +3928,7 @@
 #                 )
 #         except Exception: pass
 
-#         # ── Final Score ───────────────────────────────────────────
+#         # â”€â”€ Final Score â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 #         overall_score, overall_risk = _compute_overall(scores)
 
 #         return FullPDFResponse(
@@ -3944,7 +3944,7 @@
 #             replication_level       = replication_level,
 #             modules                 = modules_run,
 #             top_flags               = top_flags[:10],
-#             analyzed_by             = "SciPeerAI v2.2.0 — 22-Module Pipeline",
+#             analyzed_by             = "SciPeerAI v2.2.0 â€” 22-Module Pipeline",
 #         )
 
 #     except HTTPException:
@@ -3994,7 +3994,7 @@ from src.scipeerai.core.pdf_parser                  import PDFParser
 
 router = APIRouter(prefix="/api/v1", tags=["Analysis"])
 
-# ── Section-aware text routing ────────────────────────────────────────────────
+# â”€â”€ Section-aware text routing â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 _SECTION_MARKERS = [
     "abstract", "introduction", "background", "related work",
@@ -4119,7 +4119,7 @@ def _truncate(text: str, limit: int = 8000) -> str:
     return text[:limit]
 
 
-# ── Engine initialization ─────────────────────────────────────────────────────
+# â”€â”€ Engine initialization â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 _stat_engine        = StatAuditEngine()
 _figure_engine      = FigureForensicsEngine()
@@ -4147,7 +4147,7 @@ _conflict_engine    = InstitutionalConflictDetector()
 _pdf_parser         = PDFParser()
 
 
-# ── Shared response models ────────────────────────────────────────────────────
+# â”€â”€ Shared response models â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class TextAnalysisRequest(BaseModel):
     text: str = Field(..., min_length=50, description="Paper text to analyze")
@@ -4351,7 +4351,7 @@ class LLMResponse(BaseModel):
     llm_phrase_count: int; llm_score: float; risk_level: str; summary: str
     flags: list[LLMFlagResponse]; flags_count: int
 
-# ── Phase 5 models ────────────────────────────────────────────────────────────
+# â”€â”€ Phase 5 models â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class Phase5FlagResponse(BaseModel):
     flag_type:   str
@@ -4438,7 +4438,7 @@ class AISpectrumResponse(BaseModel):
     flags:                list[Phase5FlagResponse]
     flags_count:          int
 
-# ── Replication Predictor models ──────────────────────────────────────────────
+# â”€â”€ Replication Predictor models â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class ReplicationRequest(BaseModel):
     text: str = Field(..., min_length=50)
@@ -4462,7 +4462,7 @@ class ReplicationResponse(BaseModel):
     flags_count:             int
     model_version:           str
 
-# ── Phase 6 models ────────────────────────────────────────────────────────────
+# â”€â”€ Phase 6 models â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class GenealogyResponse(BaseModel):
     doi_count:               int
@@ -4507,7 +4507,7 @@ class ConflictResponse(BaseModel):
     flags:                    list[Phase5FlagResponse]
     flags_count:              int
 
-# ── Full PDF models ───────────────────────────────────────────────────────────
+# â”€â”€ Full PDF models â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class ModuleSummary(BaseModel):
     module:      str
@@ -4532,14 +4532,28 @@ class FullPDFResponse(BaseModel):
     analyzed_by:             str
 
 
-# ── Helpers ───────────────────────────────────────────────────────────────────
+# â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-def _compute_overall(scores: list[float]) -> tuple[float, str]:
-    avg = round(sum(scores) / len(scores), 3) if scores else 0.0
-    if avg >= 0.7:   level = "HIGH"
-    elif avg >= 0.4: level = "MEDIUM"
-    else:            level = "LOW"
-    return avg, level
+def _compute_overall(scores: list[float], module_summaries: list = None) -> tuple[float, str]:
+    if not scores:
+        return 0.0, "LOW"
+    avg = round(sum(scores) / len(scores), 3)
+    critical_modules = [s for s in scores if s >= 0.70]
+    high_modules     = [s for s in scores if s >= 0.50]
+    if critical_modules:
+        return round(max(scores), 3), "HIGH"
+    if len(high_modules) >= 2:
+        return round(max(scores), 3), "HIGH"
+    if len(high_modules) == 1:
+        if avg >= 0.3:
+            return round(max(scores), 3), "HIGH"
+        return avg, "MEDIUM"
+    if avg >= 0.7:
+        return avg, "HIGH"
+    elif avg >= 0.4:
+        return avg, "MEDIUM"
+    else:
+        return avg, "LOW"
 
 
 def _verdict(risk: str) -> str:
@@ -4562,7 +4576,7 @@ def _p5flags(flags) -> list:
     ]
 
 
-# ── Status ────────────────────────────────────────────────────────────────────
+# â”€â”€ Status â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @router.get("/status")
 def system_status():
@@ -4598,16 +4612,16 @@ def system_status():
         "tests_passing":   209,
         "text_extraction": "section-aware",
         "ml_ensemble":     "LightGBM+XGBoost+RF+LR",
-        "benchmark":       "SciPeerBench v2.0 — 91,779 papers",
+        "benchmark":       "SciPeerBench v2.0 â€” 91,779 papers",
         "ensemble_auc":    0.895,
     }
 
 
-# ── Original 14 endpoints ─────────────────────────────────────────────────────
+# â”€â”€ Original 14 endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @router.post("/analyze/statistics", response_model=StatAuditResponse)
 def analyze_statistics(request: TextAnalysisRequest):
-    """Statistical Audit — p-hacking, sample size, round numbers."""
+    """Statistical Audit â€” p-hacking, sample size, round numbers."""
     try:
         r = _stat_engine.analyze(_smart_text(request.text, "statistics"))
         return StatAuditResponse(
@@ -4625,7 +4639,7 @@ def analyze_statistics(request: TextAnalysisRequest):
 
 @router.post("/analyze/figures", response_model=FigureForensicsResponse)
 async def analyze_figures(file: UploadFile = File(...)):
-    """Figure Forensics — duplicate image detection."""
+    """Figure Forensics â€” duplicate image detection."""
     if not file.filename.endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Only PDF files accepted.")
     tmp_path = None
@@ -4651,7 +4665,7 @@ async def analyze_figures(file: UploadFile = File(...)):
 
 @router.post("/analyze/methodology", response_model=MethodologyResponse)
 def analyze_methodology(request: MethodologyRequest):
-    """Methodology Checker — causation, control groups, timeframe."""
+    """Methodology Checker â€” causation, control groups, timeframe."""
     try:
         r = _method_engine.analyze(_smart_text(request.text, "methodology"), request.abstract)
         return MethodologyResponse(
@@ -4667,7 +4681,7 @@ def analyze_methodology(request: MethodologyRequest):
 
 @router.post("/analyze/citations", response_model=CitationResponse)
 def analyze_citations(request: CitationRequest):
-    """Citation Integrity — self-citation, unsupported claims."""
+    """Citation Integrity â€” self-citation, unsupported claims."""
     try:
         r = _citation_engine.analyze(_smart_text(request.text, "citations"), request.author_name)
         return CitationResponse(
@@ -4687,7 +4701,7 @@ def analyze_citations(request: CitationRequest):
 
 @router.post("/analyze/reproducibility", response_model=ReproducibilityResponse)
 def analyze_reproducibility(request: ReproducibilityRequest):
-    """Reproducibility Scanner — code, data, ethics, preregistration."""
+    """Reproducibility Scanner â€” code, data, ethics, preregistration."""
     try:
         r = _repro_engine.analyze(_smart_text(request.text, "reproducibility"))
         return ReproducibilityResponse(
@@ -4708,7 +4722,7 @@ def analyze_reproducibility(request: ReproducibilityRequest):
 
 @router.post("/analyze/novelty", response_model=NoveltyResponse)
 def analyze_novelty(request: NoveltyRequest):
-    """Novelty Scorer — literature search, novelty estimation."""
+    """Novelty Scorer â€” literature search, novelty estimation."""
     try:
         r         = _novelty_engine.analyze(_smart_text(request.text, "novelty", per_section_limit=2000), request.title)
         raw_flags = getattr(r, 'flags', []) or []
@@ -4730,7 +4744,7 @@ def analyze_novelty(request: NoveltyRequest):
 
 @router.post("/analyze/grim", response_model=GrimResponse)
 def analyze_grim(request: GrimRequest):
-    """GRIM Test — mathematically impossible means."""
+    """GRIM Test â€” mathematically impossible means."""
     try:
         r = _grim_engine.analyze(_smart_text(request.text, "grim"))
         return GrimResponse(impossible_means=r.impossible_means, possible_means=r.possible_means, grim_score=r.grim_score, risk_level=r.risk_level, summary=r.summary, flags=[GrimFlagResponse(flag_type=f.flag_type, severity=f.severity, description=f.description, evidence=f.evidence, suggestion=f.suggestion) for f in r.flags], flags_count=r.flags_count)
@@ -4740,7 +4754,7 @@ def analyze_grim(request: GrimRequest):
 
 @router.post("/analyze/sprite", response_model=SpriteResponse)
 def analyze_sprite(request: SpriteRequest):
-    """SPRITE Test — impossible distributions."""
+    """SPRITE Test â€” impossible distributions."""
     try:
         r = _sprite_engine.analyze(_smart_text(request.text, "sprite"))
         return SpriteResponse(impossible_combinations=r.impossible_combinations, possible_combinations=r.possible_combinations, sprite_score=r.sprite_score, risk_level=r.risk_level, summary=r.summary, flags=[SpriteFlagResponse(flag_type=f.flag_type, severity=f.severity, description=f.description, evidence=f.evidence, suggestion=f.suggestion) for f in r.flags], flags_count=r.flags_count)
@@ -4750,7 +4764,7 @@ def analyze_sprite(request: SpriteRequest):
 
 @router.post("/analyze/granularity", response_model=GranularityResponse)
 def analyze_granularity(request: GranularityRequest):
-    """Granularity Analyzer — Benford Law, digit preference."""
+    """Granularity Analyzer â€” Benford Law, digit preference."""
     try:
         r = _granularity_engine.analyze(_smart_text(request.text, "granularity"))
         return GranularityResponse(digit_preference_score=r.digit_preference_score, benford_score=r.benford_score, round_number_ratio=r.round_number_ratio, granularity_score=r.granularity_score, risk_level=r.risk_level, summary=r.summary, flags=[GranularityFlagResponse(flag_type=f.flag_type, severity=f.severity, description=f.description, evidence=f.evidence, suggestion=f.suggestion) for f in r.flags], flags_count=r.flags_count)
@@ -4760,7 +4774,7 @@ def analyze_granularity(request: GranularityRequest):
 
 @router.post("/analyze/pcurve", response_model=PCurveResponse)
 def analyze_pcurve(request: PCurveRequest):
-    """P-Curve Analyzer — publication bias detector."""
+    """P-Curve Analyzer â€” publication bias detector."""
     try:
         r = _pcurve_engine.analyze(_smart_text(request.text, "pcurve"))
         return PCurveResponse(p_values_found=r.p_values_found, significant_p=r.significant_p, right_skew_ratio=r.right_skew_ratio, clustering_score=r.clustering_score, pcurve_score=r.pcurve_score, risk_level=r.risk_level, summary=r.summary, flags=[PCurveFlagResponse(flag_type=f.flag_type, severity=f.severity, description=f.description, evidence=f.evidence, suggestion=f.suggestion) for f in r.flags], flags_count=r.flags_count)
@@ -4770,7 +4784,7 @@ def analyze_pcurve(request: PCurveRequest):
 
 @router.post("/analyze/effect_size", response_model=EffectSizeResponse)
 def analyze_effect_size(request: EffectSizeRequest):
-    """Effect Size Validator — Cohen d, power analysis."""
+    """Effect Size Validator â€” Cohen d, power analysis."""
     try:
         r = _effect_size_engine.analyze(_smart_text(request.text, "effect_size"))
         return EffectSizeResponse(effect_sizes_found=r.effect_sizes_found, power_estimates=r.power_estimates, inflated_effects=r.inflated_effects, underpowered=r.underpowered, effect_score=r.effect_score, risk_level=r.risk_level, summary=r.summary, flags=[EffectSizeFlagResponse(flag_type=f.flag_type, severity=f.severity, description=f.description, evidence=f.evidence, suggestion=f.suggestion) for f in r.flags], flags_count=r.flags_count)
@@ -4780,7 +4794,7 @@ def analyze_effect_size(request: EffectSizeRequest):
 
 @router.post("/analyze/retraction", response_model=RetractionResponse)
 def analyze_retraction(request: RetractionRequest):
-    """Retraction Checker — live CrossRef API."""
+    """Retraction Checker â€” live CrossRef API."""
     try:
         r = _retraction_engine.analyze(_smart_text(request.text, "retraction"))
         return RetractionResponse(dois_found=r.dois_found, retracted_found=r.retracted_found, checked_count=r.checked_count, retraction_score=r.retraction_score, risk_level=r.risk_level, summary=r.summary, flags=[RetractionFlagResponse(flag_type=f.flag_type, severity=f.severity, description=f.description, evidence=f.evidence, suggestion=f.suggestion) for f in r.flags], flags_count=r.flags_count)
@@ -4790,7 +4804,7 @@ def analyze_retraction(request: RetractionRequest):
 
 @router.post("/analyze/cartel", response_model=CartelResponse)
 def analyze_cartel(request: CartelRequest):
-    """Citation Cartel Detector — graph-based ring detection."""
+    """Citation Cartel Detector â€” graph-based ring detection."""
     try:
         r = _cartel_engine.analyze(_smart_text(request.text, "cartel"))
         return CartelResponse(authors_found=r.authors_found, citation_network=r.citation_network, cartel_score=r.cartel_score, self_citation_ratio=r.self_citation_ratio, network_diversity=r.network_diversity, risk_level=r.risk_level, summary=r.summary, flags=[CartelFlagResponse(flag_type=f.flag_type, severity=f.severity, description=f.description, evidence=f.evidence, suggestion=f.suggestion) for f in r.flags], flags_count=r.flags_count)
@@ -4800,7 +4814,7 @@ def analyze_cartel(request: CartelRequest):
 
 @router.post("/analyze/llm", response_model=LLMResponse)
 def analyze_llm(request: LLMRequest):
-    """LLM Detector — burstiness, TTR, phrase patterns."""
+    """LLM Detector â€” burstiness, TTR, phrase patterns."""
     try:
         r = _llm_engine.analyze(_smart_text(request.text, "llm"))
         return LLMResponse(burstiness_score=r.burstiness_score, vocabulary_diversity=r.vocabulary_diversity, sentence_uniformity=r.sentence_uniformity, llm_phrase_count=r.llm_phrase_count, llm_score=r.llm_score, risk_level=r.risk_level, summary=r.summary, flags=[LLMFlagResponse(flag_type=f.flag_type, severity=f.severity, description=f.description, evidence=f.evidence, suggestion=f.suggestion) for f in r.flags], flags_count=r.flags_count)
@@ -4808,11 +4822,11 @@ def analyze_llm(request: LLMRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# ── Phase 5 endpoints ─────────────────────────────────────────────────────────
+# â”€â”€ Phase 5 endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @router.post("/analyze/fraud_fingerprint", response_model=FraudFingerprintResponse)
 def analyze_fraud_fingerprint(request: TextAnalysisRequest):
-    """Fraud Fingerprinting — writing DNA inconsistency detection."""
+    """Fraud Fingerprinting â€” writing DNA inconsistency detection."""
     try:
         r = _fraud_engine.analyze(_smart_text(request.text, "fraud_fingerprint"))
         return FraudFingerprintResponse(style_shift_score=r.style_shift_score, precision_inconsistency=r.precision_inconsistency, vocabulary_mixing_score=r.vocabulary_mixing_score, hedge_overuse_score=r.hedge_overuse_score, fingerprint_score=r.fingerprint_score, risk_level=r.risk_level, summary=r.summary, flags=_p5flags(r.flags), flags_count=r.flags_count)
@@ -4822,7 +4836,7 @@ def analyze_fraud_fingerprint(request: TextAnalysisRequest):
 
 @router.post("/analyze/temporal_anomaly", response_model=TemporalAnomalyResponse)
 def analyze_temporal_anomaly(request: TextAnalysisRequest):
-    """Temporal Anomaly — citation timeline paradox detection."""
+    """Temporal Anomaly â€” citation timeline paradox detection."""
     try:
         r = _temporal_engine.analyze(_smart_text(request.text, "temporal"))
         return TemporalAnomalyResponse(collection_years=r.collection_years, cited_years=r.cited_years, future_citations=r.future_citations, recency_claim_score=r.recency_claim_score, timeline_score=r.timeline_score, temporal_score=r.temporal_score, risk_level=r.risk_level, summary=r.summary, flags=_p5flags(r.flags), flags_count=r.flags_count)
@@ -4832,7 +4846,7 @@ def analyze_temporal_anomaly(request: TextAnalysisRequest):
 
 @router.post("/analyze/citation_dna", response_model=CitationDNAResponse)
 def analyze_citation_dna(request: TextAnalysisRequest):
-    """Citation DNA — network concentration and diversity analysis."""
+    """Citation DNA â€” network concentration and diversity analysis."""
     try:
         r = _dna_engine.analyze(_smart_text(request.text, "citation_dna"))
         return CitationDNAResponse(total_citations=r.total_citations, unique_authors=r.unique_authors, author_concentration=r.author_concentration, journal_concentration=r.journal_concentration, decade_concentration=r.decade_concentration, geographic_diversity=r.geographic_diversity, dna_diversity_score=r.dna_diversity_score, dna_risk_score=r.dna_risk_score, risk_level=r.risk_level, summary=r.summary, flags=_p5flags(r.flags), flags_count=r.flags_count)
@@ -4842,7 +4856,7 @@ def analyze_citation_dna(request: TextAnalysisRequest):
 
 @router.post("/analyze/data_fingerprint", response_model=DataFingerprintResponse)
 def analyze_data_fingerprint(request: TextAnalysisRequest):
-    """Data Fingerprinting — fabrication and numerical cloning detection."""
+    """Data Fingerprinting â€” fabrication and numerical cloning detection."""
     try:
         r = _dataprint_engine.analyze(_smart_text(request.text, "data_fingerprint"))
         return DataFingerprintResponse(total_numbers=r.total_numbers, round_number_ratio=r.round_number_ratio, terminal_digit_bias=r.terminal_digit_bias, impossible_pairs=r.impossible_pairs, suspicious_duplicates=[round(v, 4) for v in r.suspicious_duplicates], fingerprint_score=r.fingerprint_score, risk_level=r.risk_level, summary=r.summary, flags=_p5flags(r.flags), flags_count=r.flags_count)
@@ -4852,7 +4866,7 @@ def analyze_data_fingerprint(request: TextAnalysisRequest):
 
 @router.post("/analyze/peer_review", response_model=PeerReviewResponse)
 def analyze_peer_review(request: TextAnalysisRequest):
-    """Peer Review Score — process manipulation detection."""
+    """Peer Review Score â€” process manipulation detection."""
     try:
         r = _peerreview_engine.analyze(_smart_text(request.text, "peer_review"))
         return PeerReviewResponse(days_to_acceptance=r.days_to_acceptance, has_conflict_statement=r.has_conflict_statement, conflict_credible=r.conflict_credible, reviewer_suggestions=r.reviewer_suggestions, special_issue=r.special_issue, predatory_signals=r.predatory_signals, manipulation_score=r.manipulation_score, risk_level=r.risk_level, summary=r.summary, flags=_p5flags(r.flags), flags_count=r.flags_count)
@@ -4862,7 +4876,7 @@ def analyze_peer_review(request: TextAnalysisRequest):
 
 @router.post("/analyze/ai_spectrum", response_model=AISpectrumResponse)
 def analyze_ai_spectrum(request: TextAnalysisRequest):
-    """AI-Human Spectrum — model attribution and ratio analysis."""
+    """AI-Human Spectrum â€” model attribution and ratio analysis."""
     try:
         r = _spectrum_engine.analyze(_smart_text(request.text, "ai_spectrum"))
         return AISpectrumResponse(overall_human_ratio=r.overall_human_ratio, overall_ai_ratio=r.overall_ai_ratio, dominant_ai_model=r.dominant_ai_model, model_confidence=r.model_confidence, ai_sections=r.ai_sections, human_sections=r.human_sections, gpt4_signal_count=r.gpt4_signal_count, claude_signal_count=r.claude_signal_count, gemini_signal_count=r.gemini_signal_count, spectrum_score=r.spectrum_score, risk_level=r.risk_level, summary=r.summary, flags=_p5flags(r.flags), flags_count=r.flags_count)
@@ -4870,12 +4884,12 @@ def analyze_ai_spectrum(request: TextAnalysisRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# ── Replication Predictor endpoint ────────────────────────────────────────────
+# â”€â”€ Replication Predictor endpoint â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @router.post("/analyze/replication", response_model=ReplicationResponse)
 def analyze_replication(request: TextAnalysisRequest):
     """
-    Replication Probability Score — ML ensemble replication likelihood prediction.
+    Replication Probability Score â€” ML ensemble replication likelihood prediction.
     LightGBM + XGBoost + RandomForest + LogisticRegression.
     Trained on SciPeerBench v2.0 (91,779 papers). Ensemble AUC: 0.895.
     """
@@ -5016,11 +5030,11 @@ def analyze_replication(request: TextAnalysisRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# ── Phase 6 endpoints ─────────────────────────────────────────────────────────
+# â”€â”€ Phase 6 endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @router.post("/analyze/genealogy", response_model=GenealogyResponse)
 def analyze_genealogy(request: TextAnalysisRequest):
-    """Research Genealogy Engine — citation ancestry, ring detection,
+    """Research Genealogy Engine â€” citation ancestry, ring detection,
     lineage concentration, retracted ancestor checking. Module 22."""
     try:
         r = _genealogy_engine.analyze(_smart_text(request.text, "genealogy"))
@@ -5031,7 +5045,7 @@ def analyze_genealogy(request: TextAnalysisRequest):
 
 @router.post("/analyze/field_saturation", response_model=SaturationResponse)
 def analyze_field_saturation(request: TextAnalysisRequest):
-    """Field Saturation Detector — topic overcrowding, redundancy,
+    """Field Saturation Detector â€” topic overcrowding, redundancy,
     novelty claim analysis, contribution vagueness scoring. Module 23."""
     try:
         r = _saturation_engine.analyze(_smart_text(request.text, "saturation"))
@@ -5042,7 +5056,7 @@ def analyze_field_saturation(request: TextAnalysisRequest):
 
 @router.post("/analyze/institutional_conflict", response_model=ConflictResponse)
 def analyze_institutional_conflict(request: TextAnalysisRequest):
-    """Institutional Conflict Score — undisclosed COI, industry funding bias,
+    """Institutional Conflict Score â€” undisclosed COI, industry funding bias,
     self-serving citations, overstated conclusions. Module 24."""
     try:
         r = _conflict_engine.analyze(_smart_text(request.text, "conflict"))
@@ -5051,12 +5065,12 @@ def analyze_institutional_conflict(request: TextAnalysisRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# ── Full PDF — 24-Module Master Endpoint ─────────────────────────────────────
+# â”€â”€ Full PDF â€” 24-Module Master Endpoint â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @router.post("/analyze/full-pdf", response_model=FullPDFResponse)
 async def analyze_full_pdf(file: UploadFile = File(...)):
     """
-    Master endpoint — Upload a PDF and run all 24 analysis modules at once.
+    Master endpoint â€” Upload a PDF and run all 24 analysis modules at once.
     Returns a unified integrity report with per-module scores, top flags,
     and an ML ensemble replication probability score.
     Trained on SciPeerBench v2.0 (91,779 papers, AUC 0.895).
@@ -5075,7 +5089,7 @@ async def analyze_full_pdf(file: UploadFile = File(...)):
         scores         = []
         module_scores  = {}
 
-        # ── Module 01: Statistical Audit ──────────────────────────
+        # â”€â”€ Module 01: Statistical Audit â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         try:
             r = _stat_engine.analyze(_smart_text(text, "statistics"))
             modules_run.append(ModuleSummary(module="Statistical Audit", risk_level=r.risk_level, risk_score=r.risk_score, summary=r.summary, flags_count=len(r.flags)))
@@ -5083,7 +5097,7 @@ async def analyze_full_pdf(file: UploadFile = File(...)):
             for f in r.flags[:2]: top_flags.append(f"[Statistics] {f.description}")
         except Exception: pass
 
-        # ── Module 02: Methodology Checker ────────────────────────
+        # â”€â”€ Module 02: Methodology Checker â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         try:
             abstract = paper.sections.get("abstract", "")
             r        = _method_engine.analyze(_smart_text(text, "methodology"), abstract)
@@ -5093,7 +5107,7 @@ async def analyze_full_pdf(file: UploadFile = File(...)):
             for f in r.flags[:2]: top_flags.append(f"[Methodology] {f.issue}")
         except Exception: pass
 
-        # ── Module 03: Citation Integrity ─────────────────────────
+        # â”€â”€ Module 03: Citation Integrity â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         try:
             r = _citation_engine.analyze(_smart_text(text, "citations"), "")
             modules_run.append(ModuleSummary(module="Citation Integrity", risk_level=r.risk_level, risk_score=r.risk_score, summary=r.summary, flags_count=len(r.flags)))
@@ -5101,7 +5115,7 @@ async def analyze_full_pdf(file: UploadFile = File(...)):
             for f in r.flags[:2]: top_flags.append(f"[Citations] {f.description}")
         except Exception: pass
 
-        # ── Module 04: Reproducibility ────────────────────────────
+        # â”€â”€ Module 04: Reproducibility â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         try:
             r = _repro_engine.analyze(_smart_text(text, "reproducibility"))
             repro_risk = round(1.0 - r.reproducibility_score, 4)
@@ -5109,7 +5123,7 @@ async def analyze_full_pdf(file: UploadFile = File(...)):
             scores.append(repro_risk); module_scores["score_repro"] = repro_risk
         except Exception: pass
 
-        # ── Module 05: Novelty ────────────────────────────────────
+        # â”€â”€ Module 05: Novelty â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         try:
             r = _novelty_engine.analyze(_smart_text(text, "novelty", per_section_limit=2000), paper.title)
             novelty_risk = getattr(r, "risk_score", round(1.0 - r.novelty_score, 4))
@@ -5117,42 +5131,42 @@ async def analyze_full_pdf(file: UploadFile = File(...)):
             scores.append(novelty_risk); module_scores["score_novelty"] = novelty_risk
         except Exception: pass
 
-        # ── Module 06: GRIM Test ──────────────────────────────────
+        # â”€â”€ Module 06: GRIM Test â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         try:
             r = _grim_engine.analyze(_smart_text(text, "grim"))
             modules_run.append(ModuleSummary(module="GRIM Test", risk_level=r.risk_level, risk_score=r.grim_score, summary=r.summary, flags_count=r.flags_count))
             scores.append(r.grim_score); module_scores["score_grim"] = r.grim_score
         except Exception: pass
 
-        # ── Module 07: SPRITE Test ────────────────────────────────
+        # â”€â”€ Module 07: SPRITE Test â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         try:
             r = _sprite_engine.analyze(_smart_text(text, "sprite"))
             modules_run.append(ModuleSummary(module="SPRITE Test", risk_level=r.risk_level, risk_score=r.sprite_score, summary=r.summary, flags_count=r.flags_count))
             scores.append(r.sprite_score); module_scores["score_sprite"] = r.sprite_score
         except Exception: pass
 
-        # ── Module 08: Granularity ────────────────────────────────
+        # â”€â”€ Module 08: Granularity â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         try:
             r = _granularity_engine.analyze(_smart_text(text, "granularity"))
             modules_run.append(ModuleSummary(module="Granularity Analyzer", risk_level=r.risk_level, risk_score=r.granularity_score, summary=r.summary, flags_count=r.flags_count))
             scores.append(r.granularity_score); module_scores["score_granularity"] = r.granularity_score
         except Exception: pass
 
-        # ── Module 09: P-Curve ────────────────────────────────────
+        # â”€â”€ Module 09: P-Curve â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         try:
             r = _pcurve_engine.analyze(_smart_text(text, "pcurve"))
             modules_run.append(ModuleSummary(module="P-Curve Analyzer", risk_level=r.risk_level, risk_score=r.pcurve_score, summary=r.summary, flags_count=r.flags_count))
             scores.append(r.pcurve_score); module_scores["score_pcurve"] = r.pcurve_score
         except Exception: pass
 
-        # ── Module 10: Effect Size ────────────────────────────────
+        # â”€â”€ Module 10: Effect Size â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         try:
             r = _effect_size_engine.analyze(_smart_text(text, "effect_size"))
             modules_run.append(ModuleSummary(module="Effect Size Validator", risk_level=r.risk_level, risk_score=r.effect_score, summary=r.summary, flags_count=r.flags_count))
             scores.append(r.effect_score); module_scores["score_effect"] = r.effect_score
         except Exception: pass
 
-        # ── Module 11: Retraction Checker ─────────────────────────
+        # â”€â”€ Module 11: Retraction Checker â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         try:
             r = _retraction_engine.analyze(_smart_text(text, "retraction"))
             modules_run.append(ModuleSummary(module="Retraction Checker", risk_level=r.risk_level, risk_score=r.retraction_score, summary=r.summary, flags_count=r.flags_count))
@@ -5160,7 +5174,7 @@ async def analyze_full_pdf(file: UploadFile = File(...)):
             for f in r.flags[:1]: top_flags.append(f"[Retraction] {f.description}")
         except Exception: pass
 
-        # ── Module 12: Citation Cartel ────────────────────────────
+        # â”€â”€ Module 12: Citation Cartel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         try:
             r = _cartel_engine.analyze(_smart_text(text, "cartel"))
             modules_run.append(ModuleSummary(module="Citation Cartel Detector", risk_level=r.risk_level, risk_score=r.cartel_score, summary=r.summary, flags_count=r.flags_count))
@@ -5168,14 +5182,14 @@ async def analyze_full_pdf(file: UploadFile = File(...)):
             for f in r.flags[:1]: top_flags.append(f"[Cartel] {f.description}")
         except Exception: pass
 
-        # ── Module 13: LLM Detector ───────────────────────────────
+        # â”€â”€ Module 13: LLM Detector â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         try:
             r = _llm_engine.analyze(_smart_text(text, "llm"))
             modules_run.append(ModuleSummary(module="LLM Paper Detector", risk_level=r.risk_level, risk_score=r.llm_score, summary=r.summary, flags_count=r.flags_count))
             scores.append(r.llm_score); module_scores["score_llm"] = r.llm_score
         except Exception: pass
 
-        # ── Module 14: Figure Forensics ───────────────────────────
+        # â”€â”€ Module 14: Figure Forensics â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         try:
             tmp_path = None
             with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
@@ -5187,49 +5201,49 @@ async def analyze_full_pdf(file: UploadFile = File(...)):
             if tmp_path and os.path.exists(tmp_path): os.unlink(tmp_path)
         except Exception: pass
 
-        # ── Module 15: Fraud Fingerprinting ───────────────────────
+        # â”€â”€ Module 15: Fraud Fingerprinting â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         try:
             r = _fraud_engine.analyze(_smart_text(text, "fraud_fingerprint"))
             modules_run.append(ModuleSummary(module="Fraud Fingerprinting", risk_level=r.risk_level, risk_score=r.fingerprint_score, summary=r.summary, flags_count=r.flags_count))
             scores.append(r.fingerprint_score); module_scores["score_fraud"] = r.fingerprint_score
         except Exception: pass
 
-        # ── Module 16: Temporal Anomaly ───────────────────────────
+        # â”€â”€ Module 16: Temporal Anomaly â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         try:
             r = _temporal_engine.analyze(_smart_text(text, "temporal"))
             modules_run.append(ModuleSummary(module="Temporal Anomaly Detector", risk_level=r.risk_level, risk_score=r.temporal_score, summary=r.summary, flags_count=r.flags_count))
             scores.append(r.temporal_score); module_scores["score_temporal"] = r.temporal_score
         except Exception: pass
 
-        # ── Module 17: Citation DNA ───────────────────────────────
+        # â”€â”€ Module 17: Citation DNA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         try:
             r = _dna_engine.analyze(_smart_text(text, "citation_dna"))
             modules_run.append(ModuleSummary(module="Citation DNA Analyzer", risk_level=r.risk_level, risk_score=r.dna_risk_score, summary=r.summary, flags_count=r.flags_count))
             scores.append(r.dna_risk_score); module_scores["score_dna"] = r.dna_risk_score
         except Exception: pass
 
-        # ── Module 18: Data Fingerprint ───────────────────────────
+        # â”€â”€ Module 18: Data Fingerprint â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         try:
             r = _dataprint_engine.analyze(_smart_text(text, "data_fingerprint"))
             modules_run.append(ModuleSummary(module="Data Fingerprint Analyzer", risk_level=r.risk_level, risk_score=r.fingerprint_score, summary=r.summary, flags_count=r.flags_count))
             scores.append(r.fingerprint_score); module_scores["score_dataprint"] = r.fingerprint_score
         except Exception: pass
 
-        # ── Module 19: Peer Review Score ──────────────────────────
+        # â”€â”€ Module 19: Peer Review Score â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         try:
             r = _peerreview_engine.analyze(_smart_text(text, "peer_review"))
             modules_run.append(ModuleSummary(module="Peer Review Score", risk_level=r.risk_level, risk_score=r.manipulation_score, summary=r.summary, flags_count=r.flags_count))
             scores.append(r.manipulation_score); module_scores["score_peerreview"] = r.manipulation_score
         except Exception: pass
 
-        # ── Module 20: AI-Human Spectrum ──────────────────────────
+        # â”€â”€ Module 20: AI-Human Spectrum â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         try:
             r = _spectrum_engine.analyze(_smart_text(text, "ai_spectrum"))
             modules_run.append(ModuleSummary(module="AI-Human Spectrum", risk_level=r.risk_level, risk_score=r.spectrum_score, summary=r.summary, flags_count=r.flags_count))
             scores.append(r.spectrum_score); module_scores["score_spectrum"] = r.spectrum_score
         except Exception: pass
 
-        # ── Module 21: Replication Probability Score ──────────────
+        # â”€â”€ Module 21: Replication Probability Score â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         replication_probability = 0.5
         replication_level       = "UNKNOWN"
         try:
@@ -5241,7 +5255,7 @@ async def analyze_full_pdf(file: UploadFile = File(...)):
             if rep.flags_count > 0: top_flags.append(f"[Replication] {rep.verdict}")
         except Exception: pass
 
-        # ── Module 22: Research Genealogy Engine ──────────────────
+        # â”€â”€ Module 22: Research Genealogy Engine â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         try:
             r = _genealogy_engine.analyze(_smart_text(text, "genealogy"))
             modules_run.append(ModuleSummary(module="Research Genealogy Engine", risk_level=r.risk_level.upper(), risk_score=r.genealogy_score, summary=r.summary, flags_count=r.flags_count))
@@ -5252,7 +5266,7 @@ async def analyze_full_pdf(file: UploadFile = File(...)):
                 top_flags.append(f"[Genealogy] {r.retracted_ancestors} retracted ancestor(s) found")
         except Exception: pass
 
-        # ── Module 23: Field Saturation Detector ──────────────────
+        # â”€â”€ Module 23: Field Saturation Detector â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         try:
             r = _saturation_engine.analyze(_smart_text(text, "saturation"))
             modules_run.append(ModuleSummary(module="Field Saturation Detector", risk_level=r.risk_level.upper(), risk_score=r.saturation_score, summary=r.summary, flags_count=r.flags_count))
@@ -5261,7 +5275,7 @@ async def analyze_full_pdf(file: UploadFile = File(...)):
                 top_flags.append(f"[Saturation] {r.overcrowding_signals} field overcrowding signals detected")
         except Exception: pass
 
-        # ── Module 24: Institutional Conflict Score ───────────────
+        # â”€â”€ Module 24: Institutional Conflict Score â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         try:
             r = _conflict_engine.analyze(_smart_text(text, "conflict"))
             modules_run.append(ModuleSummary(module="Institutional Conflict Score", risk_level=r.risk_level.upper(), risk_score=r.conflict_score, summary=r.summary, flags_count=r.flags_count))
@@ -5270,7 +5284,7 @@ async def analyze_full_pdf(file: UploadFile = File(...)):
                 top_flags.append(f"[Conflict] {r.undisclosed_signals} undisclosed conflict signal(s) detected")
         except Exception: pass
 
-        # ── Final Score ───────────────────────────────────────────
+        # â”€â”€ Final Score â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         overall_score, overall_risk = _compute_overall(scores)
 
         return FullPDFResponse(
@@ -5286,7 +5300,7 @@ async def analyze_full_pdf(file: UploadFile = File(...)):
             replication_level       = replication_level,
             modules                 = modules_run,
             top_flags               = top_flags[:10],
-            analyzed_by             = "SciPeerAI v2.3.0 — 24-Module Pipeline",
+            analyzed_by             = "SciPeerAI v2.3.0 â€” 24-Module Pipeline",
         )
 
     except HTTPException:
