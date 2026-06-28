@@ -1,28 +1,6 @@
-# Temporal Anomaly Detection
-# --------------------------
-# Science has a timeline. Every discovery builds on what came before.
-# A paper submitted in March 2022 cannot cite a paper published
-# in September 2022. A dataset collected in 2019 cannot reference
-# findings published in 2021 as the basis for its design.
-#
-# These are not typos. These are fabrication signals.
-#
-# This module reconstructs the timeline of a paper —
-# when data was collected, when the study was designed,
-# when it was written — and checks whether the citations
-# respect that timeline.
-#
-# It also catches subtler anomalies:
-# papers that claim recency but cite only old literature,
-# studies that report emerging findings from a decade ago,
-# and impossible sequences in the research narrative.
-
 import re
 from dataclasses import dataclass
 from datetime import datetime
-
-
-# ── constants ──────────────────────────────────────────────────────────────────
 
 CURRENT_YEAR = datetime.now().year
 
@@ -35,6 +13,8 @@ COLLECTION_MARKERS = [
     r'participants (?:were )?recruited (?:in |during )?(\w+ \d{4}|\d{4})',
     r'experiment(?:s)? (?:were |was )?run (?:in |during )?(\d{4})',
     r'survey(?:s)? (?:were |was )?administered (?:in |during )?(\d{4})',
+    r'(?:this|our|the) (\d{4}) study',
+    r'(?:we |the researchers )?collected (?:data )?in (\d{4})',
 ]
 
 RECENCY_MARKERS = [
@@ -53,8 +33,6 @@ MONTH_MAP = {
     "oct": 10, "nov": 11, "dec": 12,
 }
 
-
-# ── data structures ────────────────────────────────────────────────────────────
 
 @dataclass
 class TemporalFlag:
@@ -79,17 +57,14 @@ class TemporalResult:
     flags_count:          int
 
 
-# ── main class ────────────────────────────────────────────────────────────────
-
 class TemporalAnomalyDetector:
     """
-    Reconstructs the implied timeline of a paper and checks it
-    for internal contradictions.
-
-    Three checks:
-    1. Citation time paradox — cited papers newer than data collection
-    2. False recency — claims recent but cites old literature only
-    3. Impossible year references — citations beyond current year
+    Temporal Anomaly Detector v2.3.1
+    Upgraded citation year extraction:
+      - Brackets format: Smith (2018), (Smith, 2018)
+      - Plain format: Smith 2018, Jones et al. 2020
+      - Bare year in text near author names
+      - Reference section year extraction
     """
 
     def analyze(self, text: str) -> TemporalResult:
@@ -121,13 +96,7 @@ class TemporalAnomalyDetector:
             flags_count         = len(flags),
         )
 
-    # ── extraction ─────────────────────────────────────────────────────────────
-
     def _extract_collection_years(self, text: str) -> list:
-        """
-        Pull every year mentioned in the context of data collection.
-        These define the earliest possible citation boundary.
-        """
         years   = []
         text_lo = text.lower()
 
@@ -144,47 +113,54 @@ class TemporalAnomalyDetector:
 
     def _extract_cited_years(self, text: str) -> list:
         """
-        Pull publication years from inline citations.
-        Handles Smith (2018) and (Smith, 2018) styles.
-        Any 4-digit year between 1900-2300 is captured —
-        future years are kept because they are the anomalies.
+        v2.3.1 — Four-layer year extraction:
+        Layer 1: Smith (2018), Jones et al. (2020) — brackets outside
+        Layer 2: (Smith, 2018), (Jones et al., 2020) — brackets inside
+        Layer 3: Smith 2018, Jones 2024 — plain Author Year format (NEW)
+        Layer 4: Reference section bare years
         """
-        years = []
+        years = set()
 
-        # style 1 — name outside brackets: Smith (2018), Jones et al. (2020)
+        # Layer 1 — name outside brackets: Smith (2018)
         for match in re.finditer(
             r'[A-Z][a-zA-Z]+(?:\s+et\s+al\.?)?\s+\((\d{4})\)',
             text
         ):
             year = self._to_int_year(match.group(1))
             if year:
-                years.append(year)
+                years.add(year)
 
-        # style 2 — name inside brackets: (Smith, 2018), (Jones et al., 2020)
+        # Layer 2 — name inside brackets: (Smith, 2018)
         for match in re.finditer(
             r'\([A-Z][a-zA-Z]+(?:\s+et\s+al\.?)?,?\s*(\d{4})\)',
             text
         ):
             year = self._to_int_year(match.group(1))
             if year:
-                years.append(year)
+                years.add(year)
 
-        # style 3 — bare years in reference list section
+        # Layer 3 — plain Author Year format: Smith 2018, Jones 2024
+        # This is the critical missing layer
+        for match in re.finditer(
+            r'(?:^|[\s,;])([A-Z][a-zA-Z]+(?:\s+et\s+al\.?)?)\s+(\d{4})(?:\b)',
+            text,
+            re.MULTILINE
+        ):
+            year = self._to_int_year(match.group(2))
+            if year:
+                years.add(year)
+
+        # Layer 4 — reference section bare years
         ref_section = self._extract_references(text)
         if ref_section:
             for match in re.finditer(r'\b(\d{4})\b', ref_section):
                 year = self._to_int_year(match.group(1))
                 if year:
-                    years.append(year)
+                    years.add(year)
 
-        return sorted(set(years))
+        return sorted(years)
 
     def _to_int_year(self, raw: str) -> int:
-        """
-        Convert a raw 4-digit string to int.
-        Accepts any year from 1900 onward — no upper cap,
-        so future-year fabrications are preserved for flagging.
-        """
         try:
             year = int(raw.strip())
             if year >= 1900:
@@ -202,10 +178,6 @@ class TemporalAnomalyDetector:
         return ""
 
     def _parse_year_safe(self, raw: str) -> int:
-        """
-        Parse a year from strings like '2022', 'March 2022'.
-        Used for collection year extraction — stays within valid range.
-        """
         if not raw:
             return 0
         raw = raw.strip().lower()
@@ -218,19 +190,9 @@ class TemporalAnomalyDetector:
                 return year
         return 0
 
-    # ── checks ─────────────────────────────────────────────────────────────────
-
     def _check_citation_paradox(
-        self,
-        text: str,
-        collection_years: list,
-        cited_years: list,
-        flags: list,
+        self, text, collection_years, cited_years, flags
     ) -> list:
-        """
-        If data was collected in year X, no citation from year > X
-        should be presented as the theoretical basis for study design.
-        """
         if not collection_years or not cited_years:
             return []
 
@@ -240,20 +202,19 @@ class TemporalAnomalyDetector:
             if y > earliest_collection + 1
         ]
 
-        if len(future_refs) >= 3:
+        if len(future_refs) >= 2:
             flags.append(TemporalFlag(
                 flag_type   = "citation_time_paradox",
                 severity    = "high",
                 description = (
-                    f"Data collection appears to predate several cited references. "
+                    f"Data collection appears to predate cited references. "
                     f"If data was collected around {earliest_collection}, "
                     f"then {len(future_refs)} citation(s) from later years "
                     f"could not have informed the study design."
                 ),
                 evidence    = (
                     f"Earliest data collection: {earliest_collection}. "
-                    f"Later citations: "
-                    f"{sorted(future_refs)[:5]}"
+                    f"Later citations: {sorted(future_refs)[:5]}"
                     f"{'...' if len(future_refs) > 5 else ''}."
                 ),
                 suggestion  = (
@@ -265,16 +226,7 @@ class TemporalAnomalyDetector:
 
         return future_refs
 
-    def _check_false_recency(
-        self,
-        text: str,
-        cited_years: list,
-        flags: list,
-    ) -> float:
-        """
-        Papers claiming recent evidence but citing only old literature
-        are either unaware of the field or deliberately misleading.
-        """
+    def _check_false_recency(self, text, cited_years, flags) -> float:
         text_lo = text.lower()
         recency_claims = sum(
             1 for marker in RECENCY_MARKERS if marker in text_lo
@@ -313,14 +265,7 @@ class TemporalAnomalyDetector:
 
         return 0.0
 
-    def _check_impossible_years(
-        self,
-        cited_years: list,
-        flags: list,
-    ) -> float:
-        """
-        Citations with years beyond current year are impossible.
-        """
+    def _check_impossible_years(self, cited_years, flags) -> float:
         if not cited_years:
             return 0.0
 
@@ -333,15 +278,17 @@ class TemporalAnomalyDetector:
                 flag_type   = "future_year_citation",
                 severity    = "high",
                 description = (
-                    f"Citations reference years beyond {CURRENT_YEAR}. "
-                    f"This indicates data entry error or fabricated references."
+                    f"Citations reference years beyond {CURRENT_YEAR}: "
+                    f"{future}. "
+                    f"This indicates fabricated references or impossible timeline."
                 ),
-                evidence    = f"Future years in citations: {future}.",
+                evidence    = f"Future years detected: {future}.",
                 suggestion  = (
-                    "Verify all citation years against original sources."
+                    "Verify all citation years against original sources. "
+                    "Future-year citations are a strong fabrication signal."
                 ),
             ))
-            score = max(score, 0.8)
+            score = max(score, 0.9)
 
         if len(ancient) > 2:
             flags.append(TemporalFlag(
@@ -359,16 +306,10 @@ class TemporalAnomalyDetector:
 
         return score
 
-    # ── scoring ────────────────────────────────────────────────────────────────
-
     def _compute_score(
-        self,
-        future_citations: list,
-        recency_score: float,
-        timeline_score: float,
-        cited_years: list,
+        self, future_citations, recency_score, timeline_score, cited_years
     ) -> float:
-        paradox_score = min(len(future_citations) / 5.0, 1.0)
+        paradox_score = min(len(future_citations) / 3.0, 1.0)
         score = (
             paradox_score  * 0.50 +
             recency_score  * 0.30 +
@@ -382,17 +323,12 @@ class TemporalAnomalyDetector:
         if score >= 0.20:   return "medium"
         return "low"
 
-    def _write_summary(
-        self,
-        flags: list,
-        risk_level: str,
-        cited_years: list,
-    ) -> str:
+    def _write_summary(self, flags, risk_level, cited_years) -> str:
         year_range = ""
         if cited_years:
             valid = [y for y in cited_years if y <= CURRENT_YEAR]
             if valid:
-                year_range = f" Citations span {min(valid)}–{max(valid)}."
+                year_range = f" Citations span {min(valid)}-{max(valid)}."
 
         if not flags:
             return (
@@ -405,15 +341,9 @@ class TemporalAnomalyDetector:
         medium = sum(1 for f in flags if f.severity == "medium")
         parts  = []
         if high:
-            parts.append(
-                f"{high} high-severity timeline violation"
-                f"{'s' if high > 1 else ''}"
-            )
+            parts.append(f"{high} high-severity timeline violation{'s' if high > 1 else ''}")
         if medium:
-            parts.append(
-                f"{medium} recency inconsistenc"
-                f"{'ies' if medium > 1 else 'y'}"
-            )
+            parts.append(f"{medium} recency inconsistenc{'ies' if medium > 1 else 'y'}")
 
         return (
             f"Temporal Analysis: {', '.join(parts)} detected."

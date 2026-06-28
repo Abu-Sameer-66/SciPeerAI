@@ -1,4 +1,4 @@
-# src/scipeerai/modules/citation_cartel.py
+﻿# src/scipeerai/modules/citation_cartel.py
 #
 # Citation Cartel Detector
 # Detects suspicious citation network patterns:
@@ -42,7 +42,7 @@ class CartelResult:
 class CitationCartelDetector:
     """
     Citation Cartel Detector.
-    Analyzes citation patterns to detect cartels —
+    Analyzes citation patterns to detect cartels â€”
     groups of authors who exclusively cite each other
     to artificially inflate impact metrics.
 
@@ -59,7 +59,11 @@ class CitationCartelDetector:
     )
     
     CITE_PAT = re.compile(
-        r'([A-Z][a-z]+(?:\s+et\s+al\.?)?)\s*[\(\[,]?\s*(\d{4})[\)\]]',
+        r'([A-Z][a-z]+(?:\s+et\s+al\.?)?)\s*[\(\[,]?\s*(\d{4})[\)\]]?',
+        re.IGNORECASE
+    )
+    CITE_PAT_PLAIN = re.compile(
+        r'([A-Z][a-z]+(?:\s+et\s+al\.?)?)\s+(\d{4})(?:\b)',
         re.IGNORECASE
     )
     
@@ -82,13 +86,13 @@ class CitationCartelDetector:
         network      = self._build_network(citations)
         flags        = []
 
-        # ── Analysis ──────────────────────────────────────────────
+        # â”€â”€ Analysis â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         self_cite_ratio  = self._self_citation_ratio(citations, text)
         diversity        = self._network_diversity(network, citations)
         concentration    = self._concentration_score(network, citations)
         reciprocal       = self._detect_reciprocal(network)
 
-        # ── Flag 1: High concentration ────────────────────────────
+        # â”€â”€ Flag 1: High concentration â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         if concentration > 0.5 and len(citations) >= 5:
             top_author = max(network, key=lambda a: network[a],
                            default=None)
@@ -97,7 +101,7 @@ class CitationCartelDetector:
                 flag_type   = "citation_concentration",
                 severity    = "high" if concentration > 0.7 else "medium",
                 description = (
-                    f"Citation network is highly concentrated — "
+                    f"Citation network is highly concentrated â€” "
                     f"{round(concentration*100)}% of citations point "
                     f"to a small group of authors. This pattern "
                     f"suggests a citation cartel or echo chamber "
@@ -117,7 +121,7 @@ class CitationCartelDetector:
                 ),
             ))
 
-        # ── Flag 2: Low network diversity ─────────────────────────
+        # â”€â”€ Flag 2: Low network diversity â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         if diversity < 0.3 and len(citations) >= 8:
             flags.append(CartelFlag(
                 flag_type   = "low_citation_diversity",
@@ -141,14 +145,14 @@ class CitationCartelDetector:
                 ),
             ))
 
-        # ── Flag 3: Excessive self-citation ───────────────────────
+        # â”€â”€ Flag 3: Excessive self-citation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         if self_cite_ratio > 0.3 and len(citations) >= 5:
             flags.append(CartelFlag(
                 flag_type   = "excessive_self_citation",
                 severity    = "high" if self_cite_ratio > 0.5 else "medium",
                 description = (
                     f"Self-citation ratio: {round(self_cite_ratio*100)}%. "
-                    f"Paper cites the same author(s) excessively — "
+                    f"Paper cites the same author(s) excessively â€” "
                     f"threshold for concern is >30%. This inflates "
                     f"citation metrics artificially."
                 ),
@@ -164,7 +168,7 @@ class CitationCartelDetector:
                 ),
             ))
 
-        # ── Flag 4: Reciprocal citation pattern ───────────────────
+        # â”€â”€ Flag 4: Reciprocal citation pattern â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         if reciprocal:
             flags.append(CartelFlag(
                 flag_type   = "reciprocal_citation_pattern",
@@ -186,7 +190,7 @@ class CitationCartelDetector:
                 ),
             ))
 
-        # ── Flag 5: Too few citations ──────────────────────────────
+        # â”€â”€ Flag 5: Too few citations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         if len(citations) < 5:
             flags.append(CartelFlag(
                 flag_type   = "insufficient_citations",
@@ -225,14 +229,26 @@ class CitationCartelDetector:
             flags_count         = len(flags),
         )
 
-    # ── internal helpers ─────────────────────────────────────────
+    # â”€â”€ internal helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     def _extract_citations(self, text: str) -> list:
         citations = []
+        seen = set()
         for m in self.CITE_PAT.finditer(text):
-            citations.append((m.group(1).strip(), m.group(2)))
+            key = (m.group(1).strip().lower(), m.group(2))
+            if key not in seen:
+                seen.add(key)
+                citations.append((m.group(1).strip(), m.group(2)))
         for m in self.ETAL_PAT.finditer(text):
-            citations.append((m.group(1).strip(), m.group(2)))
+            key = (m.group(1).strip().lower(), m.group(2))
+            if key not in seen:
+                seen.add(key)
+                citations.append((m.group(1).strip(), m.group(2)))
+        for m in self.CITE_PAT_PLAIN.finditer(text):
+            key = (m.group(1).strip().lower(), m.group(2))
+            if key not in seen:
+                seen.add(key)
+                citations.append((m.group(1).strip(), m.group(2)))
         return citations
 
     def _extract_authors(self, citations: list) -> list:
