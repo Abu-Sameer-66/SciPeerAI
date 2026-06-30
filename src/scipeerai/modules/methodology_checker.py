@@ -193,13 +193,13 @@ class MethodologyChecker:
 
     def _check_causation_without_rct(self, text: str, claims: list) -> list:
         """
-        Detects causal language in claims combined with
-        study designs that cannot establish causation.
-        Classic example: observational study claiming X causes Y.
+        v2.3.2 — Detects causal language without RCT.
+        Now triggers on causal claim alone (not requiring weak_design word)
+        since strong causal assertions without RCT evidence are the real risk.
         """
         flags = []
         text_lower = text.lower()
-
+ 
         has_causal_claim = any(
             word in text_lower for word in self.CAUSATION_WORDS
         )
@@ -211,25 +211,48 @@ class MethodologyChecker:
             for word in ["randomized", "randomised", "rct",
                          "control group", "placebo", "double-blind"]
         )
-
-        if has_causal_claim and has_weak_design and not has_rct:
-            # find the actual causal sentence as evidence
+        # Negation check — "no control group" should NOT count as has_rct
+        has_negated_control = bool(re.search(
+            r'\b(?:no|without|did not have|lacked|absent)\s+(?:a\s+)?control\s+group\b',
+            text_lower
+        ))
+        if has_negated_control:
+            has_rct = False
+ 
+        # Trigger on strong causal claim alone if no RCT present
+        # OR causal claim + weak design combo (original logic)
+        should_flag = (has_causal_claim and not has_rct) or \
+                      (has_causal_claim and has_weak_design and not has_rct)
+ 
+        # Also catch absolute/overconfident causal language as a standalone signal
+        absolute_causal = any(
+            phrase in text_lower
+            for phrase in ["prove conclusively", "proves conclusively",
+                          "without doubt", "clearly show causation",
+                          "demonstrates without doubt", "no doubt that"]
+        )
+ 
+        if should_flag or (absolute_causal and not has_rct):
             evidence_sentence = ""
             for sentence in re.split(r'[.!?]', text):
-                if any(w in sentence.lower() for w in self.CAUSATION_WORDS):
+                if any(w in sentence.lower() for w in self.CAUSATION_WORDS) or \
+                   any(p in sentence.lower() for p in ["prove conclusively", "without doubt"]):
                     evidence_sentence = sentence.strip()
                     break
-
+ 
+            design_note = (
+                f"({', '.join([d for d in self.WEAK_DESIGNS if d in text_lower])}) "
+                if has_weak_design else "(no controlled design described) "
+            )
+ 
             flags.append(MethodologyFlag(
                 flag_type="causation_without_rct",
                 severity="high",
-                claim="Causal language detected in conclusions",
+                claim="Causal language detected without RCT evidence",
                 issue=(
-                    "The study uses causal language "
-                    f"({', '.join([w for w in self.CAUSATION_WORDS if w in text_lower[:500]])}) "
-                    "but the study design "
-                    f"({', '.join([d for d in self.WEAK_DESIGNS if d in text_lower])}) "
-                    "cannot establish causation."
+                    "The study uses causal or absolute language "
+                    f"but no randomized controlled trial design "
+                    f"{design_note}is described to support this claim."
                 ),
                 evidence=evidence_sentence or "See causal language in conclusions",
                 suggestion=(
@@ -238,9 +261,9 @@ class MethodologyChecker:
                     "or acknowledge the design limitation explicitly."
                 ),
             ))
-
+ 
         return flags
-
+ 
     def _check_weak_design_strong_claim(
         self, text: str, claims: list
     ) -> list:
@@ -321,12 +344,13 @@ class MethodologyChecker:
 
     def _check_missing_control_group(self, text: str) -> list:
         """
-        Studies measuring treatment effects without a
-        control group cannot isolate the treatment's impact.
+        v2.3.2 — Fixed negation handling.
+        "No control group was needed" should COUNT as missing control,
+        not be treated as evidence a control group exists.
         """
         flags = []
         text_lower = text.lower()
-
+ 
         has_treatment = any(
             w in text_lower
             for w in ["treatment", "intervention", "drug", "therapy",
@@ -335,34 +359,57 @@ class MethodologyChecker:
         has_effect_claim = any(
             w in text_lower
             for w in ["improved", "reduced", "increased", "effective",
-                      "significant effect"]
+                      "significant effect", "works", "worked"]
         )
-        has_control = any(
+ 
+        # Check for control group mention
+        raw_has_control = any(
             w in text_lower
             for w in ["control group", "control condition", "placebo",
                       "comparison group", "waitlist"]
         )
-
+        # Negation check — explicit denial of control group
+        has_negated_control = bool(re.search(
+            r'\b(?:no|without|did not have|lacked|absent|not needed|wasn.?t needed)\s+'
+            r'(?:a\s+)?control\s+group\b',
+            text_lower
+        )) or bool(re.search(
+            r'\bcontrol\s+group\s+(?:was\s+)?not\s+(?:needed|used|included)\b',
+            text_lower
+        ))
+ 
+        has_control = raw_has_control and not has_negated_control
+ 
         if has_treatment and has_effect_claim and not has_control:
+            severity = "high" if has_negated_control else "high"
+            evidence = (
+                "Explicit denial of control group detected"
+                if has_negated_control else
+                "Treatment + effect language with no control group mention"
+            )
+ 
             flags.append(MethodologyFlag(
                 flag_type="missing_control_group",
-                severity="high",
+                severity=severity,
                 claim="Treatment effect claimed without control group",
                 issue=(
                     "Effect claims for a treatment or intervention "
                     "require a control group to rule out confounds, "
-                    "placebo effects, and natural recovery."
+                    "placebo effects, and natural recovery. "
+                    + ("The paper explicitly states no control group was used."
+                       if has_negated_control else "")
                 ),
-                evidence="Treatment + effect language with no control group mention",
+                evidence=evidence,
                 suggestion=(
                     "Add a control/comparison condition, or acknowledge "
                     "that without a control group, the effect cannot be "
                     "attributed to the intervention specifically."
                 ),
             ))
-
+ 
         return flags
-
+    
+    
     def _check_generalization(self, text: str, claims: list) -> list:
         """
         Small, homogeneous samples cannot support

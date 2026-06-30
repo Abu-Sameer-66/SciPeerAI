@@ -116,16 +116,20 @@ class CitationAnalyzer:
 
     # ── extraction helpers ────────────────────────────────────
 
+    # PATCH ONLY — replace _extract_citations method in citation_analyzer.py
+
     def _extract_citations(self, text: str) -> list:
         """
-        Extract citation markers from text.
-        Handles: [1], [1,2], [1-3], (Smith, 2020), (Smith et al., 2019)
+        v2.3.2 — Extract citation markers from text.
+        Handles: [1], [1,2], [1-3], (Smith, 2020), (Smith et al., 2019),
+        and plain format: Smith 2020, Jones et al. 2019 (no brackets).
         """
         patterns = [
             r'\[\d+(?:,\s*\d+)*\]',          # [1] or [1,2,3]
             r'\[\d+\-\d+\]',                   # [1-3]
             r'\([A-Z][a-z]+(?:\s+et\s+al\.?)?,?\s+\d{4}\)',  # (Smith, 2020)
             r'\([A-Z][a-z]+\s+&\s+[A-Z][a-z]+,?\s+\d{4}\)', # (Smith & Jones, 2020)
+            r'\b[A-Z][a-z]+(?:\s+et\s+al\.?)?\s+\d{4}\b',    # Smith 2020 (no brackets)
         ]
         citations = []
         for pattern in patterns:
@@ -136,8 +140,9 @@ class CitationAnalyzer:
         seen = set()
         unique = []
         for c in citations:
-            if c not in seen:
-                seen.add(c)
+            c_norm = re.sub(r'\s+', ' ', c.strip().lower())
+            if c_norm not in seen:
+                seen.add(c_norm)
                 unique.append(c)
         return unique
 

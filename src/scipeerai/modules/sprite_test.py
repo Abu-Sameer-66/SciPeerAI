@@ -1,6 +1,6 @@
-# src/scipeerai/modules/sprite_test.py
+﻿# src/scipeerai/modules/sprite_test.py
 #
-# SPRITE Test — Sample Parameter Reconstruction via Iterative Techniques
+# SPRITE Test â€” Sample Parameter Reconstruction via Iterative Techniques
 # Based on: Heathers & Brown (2019)
 #
 # GRIM checks if a mean is possible.
@@ -45,9 +45,9 @@ class SpriteTest:
     MEAN_PAT  = re.compile(r'(?:mean|m)\s*[=:]\s*(-?\d+\.\d+)', re.I)
     SD_PAT    = re.compile(r'(?:sd|std|s\.d\.)\s*[=:]\s*(\d+\.\d+)', re.I)
     N_PAT     = re.compile(r'\bn\s*[=:]\s*(\d+)', re.I)
-    SCALE_PAT = re.compile(r'(?:scale|range)\s*[=:]\s*(\d+)\s*[-–]\s*(\d+)', re.I)
+    SCALE_PAT = re.compile(r'(?:scale|range)\s*[=:]\s*(\d+)\s*[-â€“]\s*(\d+)', re.I)
 
-    # max N to attempt full reconstruction — above this use sampling
+    # max N to attempt full reconstruction â€” above this use sampling
     RECONSTRUCTION_LIMIT = 12
 
     def analyze(self, text: str) -> SpriteResult:
@@ -70,7 +70,7 @@ class SpriteTest:
                         f"No integer distribution exists that produces "
                         f"M={mean}, SD={sd} with N={n} on a {lo}-{hi} scale. "
                         f"The reported statistics are mathematically "
-                        f"inconsistent — potential data fabrication."
+                        f"inconsistent â€” potential data fabrication."
                     ),
                     evidence    = (
                         f"M={mean}, SD={sd}, N={n}, Scale={lo}-{hi} | "
@@ -98,7 +98,7 @@ class SpriteTest:
             flags_count             = len(flags),
         )
 
-    # ── internal helpers ─────────────────────────────────────────
+    # â”€â”€ internal helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     def _sprite_check(self, mean: float, sd: float,
                       n: int, lo: int, hi: int) -> bool:
@@ -134,15 +134,21 @@ class SpriteTest:
                                n: int, lo: int, hi: int) -> bool:
         """
         Fast check for large N.
-        The maximum possible variance occurs when values are
-        as extreme as possible (all lo or hi).
+        Checks both max and min possible SD for given mean and scale.
+        v2.3.2: Added minimum SD check for suspicious near-zero SDs.
         """
-        # minimum SD = 0 (all values equal)
-        # maximum SD approximation
-        p = (mean - lo) / (hi - lo) if hi != lo else 0.5
+        if hi == lo:
+            return sd < 0.01
+        p = (mean - lo) / (hi - lo)
         max_var = p * (1 - p) * (hi - lo) ** 2
         max_sd  = math.sqrt(max_var)
-        return sd <= max_sd + 0.05
+        if sd > max_sd + 0.05:
+            return False
+        scale_range = hi - lo
+        min_reasonable_sd = scale_range / (2.0 * math.sqrt(n))
+        if sd < min_reasonable_sd * 0.3 and n >= 10:
+            return False
+        return True
 
     def _extract_groups(self, text: str):
         """Extract (mean, sd, n, scale_lo, scale_hi) tuples."""
