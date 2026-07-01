@@ -4607,7 +4607,7 @@ def system_status():
             "field_saturation":        True,
             "institutional_conflict":  True,
         },
-        "version":         "2.3.0",
+        "version":         "2.3.3",
         "modules_count":   24,
         "tests_passing":   209,
         "text_extraction": "section-aware",
@@ -5300,7 +5300,7 @@ async def analyze_full_pdf(file: UploadFile = File(...)):
             replication_level       = replication_level,
             modules                 = modules_run,
             top_flags               = top_flags[:10],
-            analyzed_by             = "SciPeerAI v2.3.0 â€” 24-Module Pipeline",
+            analyzed_by             = "SciPeerAI v2.3.3 â€” 24-Module Pipeline",
         )
 
     except HTTPException:
