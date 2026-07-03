@@ -1,418 +1,392 @@
-# src/scipeerai/modules/reproducibility_scanner.py
-#
-# Reproducibility Scanner
-# -----------------------
-# The reproducibility crisis exists largely because
-# researchers cannot access the code, data, and exact
-# methods used in published papers.
-#
-# This module scans paper text for reproducibility
-# signals — what is present and what is critically
-# missing for independent replication.
-
 import re
 from dataclasses import dataclass, field
+from typing import List, Optional
 
 
-# ── data structures ───────────────────────────────────────────
+# ── Patterns ──────────────────────────────────────────────────────────────────
+
+CODE_PAT = re.compile(
+    r'github\.com|gitlab\.com|bitbucket\.org'
+    r'|zenodo\.org|figshare\.com|osf\.io'
+    r'|code\s+(?:is\s+)?(?:publicly\s+)?available\s+at'
+    r'|source\s+code\s+(?:is\s+)?available\s+at'
+    r'|implementation\s+(?:is\s+)?available\s+at'
+    r'|scripts?\s+(?:are\s+)?(?:publicly\s+)?available\s+at'
+    r'|software\s+(?:is\s+)?available\s+at',
+    re.IGNORECASE,
+)
+
+DATA_PAT = re.compile(
+    r'data\s+(?:are\s+|is\s+)?(?:publicly\s+)?available\s+at'
+    r'|dataset\s+(?:is\s+)?available\s+at'
+    r'|data\s+(?:are\s+)?(?:deposited|archived|hosted)\s+(?:at|in|on)'
+    r'|zenodo\.org|figshare\.com|osf\.io|dryad|dataverse'
+    r'|open\s+data|data\s+availability\s+statement'
+    r'|raw\s+data\s+(?:are\s+)?available\s+at',
+    re.IGNORECASE,
+)
+
+# v2.3.2 — NEW: "available upon request" is NOT real availability
+REQUEST_ONLY_PAT = re.compile(
+    r'available\s+(?:upon|on)\s+request'
+    r'|upon\s+(?:reasonable\s+)?request'
+    r'|on\s+reasonable\s+request'
+    r'|request\s+from\s+(?:the\s+)?(?:corresponding\s+)?author'
+    r'|contact\s+(?:the\s+)?(?:corresponding\s+)?author\s+for'
+    r'|will\s+not\s+be\s+(?:publicly\s+)?(?:released|shared|available)'
+    r'|cannot\s+be\s+shared'
+    r'|proprietary\s+and\s+(?:will\s+not|cannot)'
+    r'|not\s+(?:publicly\s+)?available'
+    r'|data\s+(?:are\s+)?not\s+available',
+    re.IGNORECASE,
+)
+
+PREPRINT_PAT = re.compile(
+    r'pre-?registered|pre\s+registered'
+    r'|registration\s+(?:at|on|in)'
+    r'|osf\.io|aspredicted\.org|clinicaltrials\.gov'
+    r'|registered\s+(?:at|on|in|with)'
+    r'|registration\s+number',
+    re.IGNORECASE,
+)
+
+SOFTWARE_PAT = re.compile(
+    r'\b(?:R\s+version|python\s+\d|spss\s+v|stata\s+v|matlab\s+r'
+    r'|version\s+\d+\.\d+|v\d+\.\d+|release\s+\d)',
+    re.IGNORECASE,
+)
+
+ETHICS_PAT = re.compile(
+    r'ethics\s+(?:committee|board|approval|statement|review)'
+    r'|institutional\s+review\s+board|irb\s+(?:approval|protocol)'
+    r'|ethical\s+approval|helsinki|informed\s+consent'
+    r'|ethics\s+approval\s+(?:was\s+)?(?:obtained|granted)',
+    re.IGNORECASE,
+)
+
+COMPUTATIONAL_SIGNALS = re.compile(
+    r'\b(?:algorithm|code|script|simulation|model|neural|train(?:ed|ing)'
+    r'|dataset|pipeline|framework|implementation|repository|github'
+    r'|python|pytorch|tensorflow|keras|sklearn|numpy|pandas)\b',
+    re.IGNORECASE,
+)
+
+EMPIRICAL_SIGNALS = re.compile(
+    r'\b(?:participants?|subjects?|patients?|sample|survey|interview'
+    r'|experiment(?:al)?|randomized|control(?:led)?|cohort|trial'
+    r'|questionnaire|observation|measurement|data\s+collect)\b',
+    re.IGNORECASE,
+)
+
+OPEN_SCIENCE_BADGES = re.compile(
+    r'open\s+(?:science|data|materials|access)'
+    r'|badges?\s+(?:awarded|received|earned)'
+    r'|transparency\s+(?:statement|checklist)',
+    re.IGNORECASE,
+)
+
+CONFLICT_PAT = re.compile(
+    r'no\s+conflict|conflicts?\s+of\s+interest'
+    r'|competing\s+interest|author\s+declaration',
+    re.IGNORECASE,
+)
+
+FUNDING_PAT = re.compile(
+    r'fund(?:ed|ing)|grant|support(?:ed)?\s+by'
+    r'|acknowledge|sponsor',
+    re.IGNORECASE,
+)
+
+LIMITATION_PAT = re.compile(
+    r'limitation|caveat|shortcoming|weakness'
+    r'|future\s+(?:work|research|study|studies)',
+    re.IGNORECASE,
+)
+
+RAW_DATA_PAT = re.compile(
+    r'raw\s+data|anonymi[sz]ed\s+data|de-?identified'
+    r'|participant\s+data|individual.{0,20}data',
+    re.IGNORECASE,
+)
+
+REPLICATION_PAT = re.compile(
+    r'replicated|replication|reproduced|reproducib'
+    r'|independent\s+(?:lab|group|team|replication)',
+    re.IGNORECASE,
+)
+
+
+# ── Data classes ──────────────────────────────────────────────────────────────
 
 @dataclass
 class ReproducibilityFlag:
-    flag_type: str
-    severity: str
+    flag_type:   str
+    severity:    str
     description: str
-    evidence: str
-    suggestion: str
+    evidence:    str
+    suggestion:  str
 
 
 @dataclass
 class ReproducibilityResult:
-    # what was found
-    has_code_link: bool
-    has_data_link: bool
-    has_software_versions: bool
-    has_statistical_software: bool
-    has_preregistration: bool
-    has_ethics_statement: bool
-    has_conflict_statement: bool
-    has_sample_size_justification: bool
+    has_code_link:          bool
+    has_data_link:          bool
+    has_software_versions:  bool
+    has_preregistration:    bool
+    has_ethics_statement:   bool
+    reproducibility_score:  float
+    risk_level:             str
+    summary:                str
+    flags:                  List[ReproducibilityFlag] = field(default_factory=list)
+    flags_count:            int = 0
+    open_science_score:     float = 0.0
+    has_conflict_statement: bool = False
+    has_funding_statement:  bool = False
+    has_limitations:        bool = False
+    has_raw_data:           bool = False
+    has_replication:        bool = False
 
-    # scoring
-    reproducibility_score: float   # 0.0 = not reproducible, 1.0 = fully
-    flags: list
-    risk_level: str
-    summary: str
 
-
-# ── main class ────────────────────────────────────────────────
+# ── Main class ────────────────────────────────────────────────────────────────
 
 class ReproducibilityScanner:
     """
-    Scans paper text for reproducibility indicators.
+    Reproducibility Scanner v2.3.2
 
-    Two layers:
-    1. Presence checks — what good papers SHOULD have
-    2. Absence flags — what is missing and how serious
+    Scores papers across 10 reproducibility dimensions:
+      1. Code availability       (real link, not "upon request")
+      2. Data availability       (real link, not "upon request")
+      3. Pre-registration
+      4. Software versions
+      5. Ethics statement
+      6. Conflict of interest
+      7. Funding disclosure
+      8. Limitations section
+      9. Raw data sharing
+     10. Independent replication
 
-    Scoring is inverted from other modules:
-    HIGH reproducibility score = LOW risk.
-    We report both for clarity.
+    v2.3.2 upgrade: "available upon request" explicitly detected and
+    flagged as insufficient — real repository links required.
     """
 
-    # code/data sharing signals
-    CODE_PATTERNS = [
-        r'github\.com/\S+',
-        r'gitlab\.com/\S+',
-        r'bitbucket\.org/\S+',
-        r'code.*available.*at',
-        r'code.*provided.*at',
-        r'source code.*available',
-        r'scripts.*available',
-        r'zenodo\.org/\S+',
-        r'osf\.io/\S+',
-        r'code ocean',
-        r'figshare\.com/\S+',
-    ]
-
-    DATA_PATTERNS = [
-        r'data.*available.*at',
-        r'dataset.*available',
-        r'data.*deposited',
-        r'data.*repository',
-        r'data.*doi',
-        r'supplementary data',
-        r'data.*provided',
-        r'open data',
-        r'zenodo\.org/\S+',
-        r'osf\.io/\S+',
-        r'dryad',
-        r'figshare',
-        r'harvard dataverse',
-        r'data.*upon.*request',  # weaker — noted separately
-    ]
-
-    SOFTWARE_PATTERNS = [
-        r'r\s+version\s+\d',
-        r'python\s+\d+\.\d+',
-        r'spss\s+version',
-        r'stata\s+\d+',
-        r'matlab\s+r\d+',
-        r'sas\s+version',
-        r'scipy\s+\d',
-        r'numpy\s+\d',
-        r'sklearn\s+\d',
-        r'tensorflow\s+\d',
-        r'pytorch\s+\d',
-    ]
-
-    STAT_SOFTWARE = [
-        'r software', 'rstudio', 'spss', 'stata',
-        'sas', 'matlab', 'python', 'excel', 'graphpad'
-    ]
-
-    PREREG_PATTERNS = [
-        r'pre.?registered',
-        r'preregistered',
-        r'clinicaltrials\.gov',
-        r'osf\.io',
-        r'aspredicted\.org',
-        r'registered report',
-        r'trial registration',
-        r'isrctn',
-        r'anzctr',
-    ]
-
-    def __init__(self):
-        self._code_re    = [re.compile(p, re.IGNORECASE) for p in self.CODE_PATTERNS]
-        self._data_re    = [re.compile(p, re.IGNORECASE) for p in self.DATA_PATTERNS]
-        self._sw_re      = [re.compile(p, re.IGNORECASE) for p in self.SOFTWARE_PATTERNS]
-        self._prereg_re  = [re.compile(p, re.IGNORECASE) for p in self.PREREG_PATTERNS]
-
-    # ── public method ─────────────────────────────────────────
-
     def analyze(self, text: str) -> ReproducibilityResult:
-        """
-        Full reproducibility scan.
-        Returns what is present, what is missing, and risk level.
-        """
-        t = text.lower()
+        tl = text.lower()
+        flags: List[ReproducibilityFlag] = []
 
-        # presence checks
-        has_code       = self._check_patterns(text, self._code_re)
-        has_data       = self._check_patterns(text, self._data_re)
-        has_sw_version = self._check_patterns(text, self._sw_re)
-        has_stat_sw    = any(sw in t for sw in self.STAT_SOFTWARE)
-        has_prereg     = self._check_patterns(text, self._prereg_re)
-        has_ethics     = self._has_ethics_statement(t)
-        has_conflict   = self._has_conflict_statement(t)
-        has_n_justify  = self._has_sample_size_justification(t)
+        # ── v2.3.2: negation detection ────────────────────────────────────────
+        # "available upon request" is NOT a real availability statement
+        request_only = bool(REQUEST_ONLY_PAT.search(tl))
 
-        # build flags for what is missing
-        flags = []
-        flags.extend(self._flag_missing_code(has_code, t))
-        flags.extend(self._flag_missing_data(has_data, t))
-        flags.extend(self._flag_missing_software(has_sw_version, has_stat_sw, t))
-        flags.extend(self._flag_missing_prereg(has_prereg, t))
-        flags.extend(self._flag_missing_ethics(has_ethics, t))
-        flags.extend(self._flag_data_on_request(text))
+        # ── Core checks ───────────────────────────────────────────────────────
+        is_computational = bool(COMPUTATIONAL_SIGNALS.search(tl))
+        is_empirical     = bool(EMPIRICAL_SIGNALS.search(tl))
 
-        # reproducibility score: percentage of key items present
-        checklist = [
-            has_code, has_data, has_sw_version,
-            has_stat_sw, has_prereg, has_ethics,
-            has_conflict, has_n_justify
-        ]
-        repro_score = sum(checklist) / len(checklist)
+        # Real availability requires actual links AND no request-only language
+        has_code = bool(CODE_PAT.search(tl)) and not request_only
+        has_data = bool(DATA_PAT.search(tl)) and not request_only
+        has_pre  = bool(PREPRINT_PAT.search(tl))
+        has_sw   = bool(SOFTWARE_PAT.search(tl))
+        has_eth  = bool(ETHICS_PAT.search(tl))
 
-        # risk is inverse of reproducibility
-        risk_score = round(1.0 - repro_score, 3)
-        risk_level = self._get_risk_level(risk_score)
+        # ── Extended checks ───────────────────────────────────────────────────
+        has_conflict  = bool(CONFLICT_PAT.search(tl))
+        has_funding   = bool(FUNDING_PAT.search(tl))
+        has_limit     = bool(LIMITATION_PAT.search(tl))
+        has_raw       = bool(RAW_DATA_PAT.search(tl))
+        has_repl      = bool(REPLICATION_PAT.search(tl))
+        has_os_badge  = bool(OPEN_SCIENCE_BADGES.search(tl))
 
-        return ReproducibilityResult(
-            has_code_link=has_code,
-            has_data_link=has_data,
-            has_software_versions=has_sw_version,
-            has_statistical_software=has_stat_sw,
-            has_preregistration=has_prereg,
-            has_ethics_statement=has_ethics,
-            has_conflict_statement=has_conflict,
-            has_sample_size_justification=has_n_justify,
-            reproducibility_score=round(repro_score, 3),
-            flags=flags,
-            risk_level=risk_level,
-            summary=self._write_summary(
-                repro_score, risk_level, flags,
-                has_code, has_data
-            ),
-        )
+        # ── Flag generation ───────────────────────────────────────────────────
 
-    # ── presence detectors ────────────────────────────────────
-
-    def _check_patterns(self, text: str, patterns: list) -> bool:
-        return any(p.search(text) for p in patterns)
-
-    def _has_ethics_statement(self, text: str) -> bool:
-        markers = [
-            'ethics committee', 'institutional review board',
-            'irb approval', 'ethics approval', 'ethical approval',
-            'helsinki declaration', 'informed consent',
-            'ethical clearance', 'ethics board'
-        ]
-        return any(m in text for m in markers)
-
-    def _has_conflict_statement(self, text: str) -> bool:
-        markers = [
-            'conflict of interest', 'competing interest',
-            'no conflict', 'declare no', 'disclose',
-            'funding source', 'financial disclosure'
-        ]
-        return any(m in text for m in markers)
-
-    def _has_sample_size_justification(self, text: str) -> bool:
-        markers = [
-            'power analysis', 'sample size calculation',
-            'power calculation', 'statistical power',
-            'a priori power', 'effect size calculation',
-            'g*power', 'gpower'
-        ]
-        return any(m in text for m in markers)
-
-    # ── flag generators ───────────────────────────────────────
-
-    def _flag_missing_code(self, has_code: bool, text: str) -> list:
-        """
-        Code absence is critical for computational papers.
-        We detect if the paper is computational first.
-        """
-        flags = []
-        is_computational = any(w in text for w in [
-            'algorithm', 'code', 'software', 'script',
-            'simulation', 'model', 'neural network',
-            'machine learning', 'deep learning'
-        ])
-
-        if is_computational and not has_code:
+        # Code availability
+        if not has_code and is_computational:
+            evidence = (
+                "Code stated as 'available upon request' — "
+                "this is not a verifiable availability statement."
+                if request_only else
+                "No repository link, GitHub URL, or code availability statement found."
+            )
             flags.append(ReproducibilityFlag(
-                flag_type="missing_code_availability",
-                severity="high",
-                description=(
-                    "Computational study does not provide a link to "
-                    "source code or analysis scripts. Independent "
-                    "replication is not possible without this."
+                flag_type   = "missing_code_availability",
+                severity    = "high",
+                description = (
+                    "Computational study does not provide a link to source code "
+                    "or analysis scripts. Independent replication is not possible "
+                    "without this."
+                    + (" 'Available upon request' does not meet open science standards."
+                       if request_only else "")
                 ),
-                evidence="Computational methods detected — no code link found",
-                suggestion=(
-                    "Deposit code on GitHub/GitLab/Zenodo and include "
-                    "the URL in a 'Code Availability' section."
+                evidence    = evidence,
+                suggestion  = (
+                    "Deposit code on GitHub/GitLab/Zenodo and include the URL "
+                    "in a 'Code Availability' section."
                 ),
             ))
-        return flags
 
-    def _flag_missing_data(self, has_data: bool, text: str) -> list:
-        flags = []
-        has_empirical = any(w in text for w in [
-            'dataset', 'data', 'sample', 'participants',
-            'measurements', 'observations', 'collected'
-        ])
-
-        if has_empirical and not has_data:
+        # Data availability
+        if not has_data and is_empirical:
+            evidence = (
+                "Data stated as 'available upon request' — "
+                "this is not a verifiable data access statement."
+                if request_only else
+                "Empirical data detected — no data availability statement found."
+            )
             flags.append(ReproducibilityFlag(
-                flag_type="missing_data_availability",
-                severity="high",
-                description=(
-                    "Empirical study does not specify where raw data "
-                    "can be accessed. Results cannot be independently verified."
+                flag_type   = "missing_data_availability",
+                severity    = "high",
+                description = (
+                    "Empirical study does not specify where raw data can be accessed. "
+                    "Results cannot be independently verified."
+                    + (" Journals increasingly reject 'available upon request' "
+                       "as insufficient." if request_only else "")
                 ),
-                evidence="Empirical data detected — no data availability statement found",
-                suggestion=(
+                evidence    = evidence,
+                suggestion  = (
                     "Deposit raw data in a repository (OSF, Zenodo, Dryad, "
                     "Harvard Dataverse) and include a Data Availability statement."
                 ),
             ))
-        return flags
 
-    def _flag_missing_software(
-        self, has_versions: bool, has_sw: bool, text: str
-    ) -> list:
-        flags = []
-        is_quantitative = any(w in text for w in [
-            'statistical', 'analysis', 'test', 'regression',
-            'anova', 'correlation', 't-test', 'chi-square'
-        ])
-
-        if is_quantitative and not has_versions:
+        # Pre-registration
+        if not has_pre and is_empirical:
             flags.append(ReproducibilityFlag(
-                flag_type="missing_software_versions",
-                severity="medium",
-                description=(
-                    "Statistical analysis performed but software name and "
-                    "version number not reported. Results may not replicate "
-                    "across different software versions."
+                flag_type   = "missing_preregistration",
+                severity    = "medium",
+                description = (
+                    "No pre-registration found. Pre-registration prevents "
+                    "HARKing (Hypothesizing After Results are Known) and "
+                    "strengthens causal claims."
                 ),
-                evidence="Statistical analysis detected — no software version found",
-                suggestion=(
-                    "Specify the exact software and version used "
-                    "(e.g., 'R version 4.3.1', 'Python 3.10.12 with "
-                    "scikit-learn 1.3.0')."
+                evidence    = "No OSF, AsPredicted, or ClinicalTrials registration found.",
+                suggestion  = (
+                    "Pre-register future studies on OSF (osf.io) or "
+                    "AsPredicted (aspredicted.org) before data collection."
                 ),
             ))
-        return flags
 
-    def _flag_missing_prereg(self, has_prereg: bool, text: str) -> list:
-        flags = []
-        is_clinical_or_experimental = any(w in text for w in [
-            'clinical trial', 'randomized', 'experiment',
-            'intervention', 'treatment', 'placebo',
-            'hypothesis', 'we predicted', 'we hypothesized'
-        ])
-
-        if is_clinical_or_experimental and not has_prereg:
+        # Software versions
+        if not has_sw and is_computational:
             flags.append(ReproducibilityFlag(
-                flag_type="missing_preregistration",
-                severity="medium",
-                description=(
-                    "Experimental or clinical study with no preregistration "
-                    "detected. Without preregistration, it is difficult to "
-                    "distinguish confirmatory from exploratory analyses."
+                flag_type   = "missing_software_versions",
+                severity    = "medium",
+                description = (
+                    "Software versions not reported. Results may differ "
+                    "across package versions, making exact replication impossible."
                 ),
-                evidence="Experimental design detected — no preregistration link",
-                suggestion=(
-                    "For future studies, preregister hypotheses on OSF "
-                    "(osf.io) or ClinicalTrials.gov before data collection."
+                evidence    = "No version numbers found for statistical software or packages.",
+                suggestion  = (
+                    "Report exact version numbers for all software and packages used "
+                    "(e.g. Python 3.10.4, scikit-learn 1.2.0)."
                 ),
             ))
-        return flags
 
-    def _flag_missing_ethics(self, has_ethics: bool, text: str) -> list:
-        flags = []
-        involves_humans = any(w in text for w in [
-            'participants', 'subjects', 'patients', 'volunteers',
-            'respondents', 'human', 'children', 'adults'
-        ])
-
-        if involves_humans and not has_ethics:
+        # Ethics
+        if not has_eth and is_empirical:
             flags.append(ReproducibilityFlag(
-                flag_type="missing_ethics_statement",
-                severity="high",
-                description=(
-                    "Human participants study with no ethics approval "
-                    "or IRB statement detected. This is required by "
-                    "most journals and funding bodies."
+                flag_type   = "missing_ethics_statement",
+                severity    = "high",
+                description = (
+                    "No ethics approval or IRB statement found. "
+                    "Human subject research requires documented ethics approval."
                 ),
-                evidence="Human participants detected — no ethics statement found",
-                suggestion=(
-                    "Include an Ethics Statement specifying the approving "
-                    "body, protocol number, and that informed consent was obtained."
+                evidence    = "No ethics committee, IRB, or Helsinki declaration reference.",
+                suggestion  = (
+                    "Include ethics approval number and committee name. "
+                    "State that participants gave informed consent."
                 ),
             ))
-        return flags
 
-    def _flag_data_on_request(self, text: str) -> list:
-        """
-        'Data available upon request' is widely considered
-        a reproducibility red flag — studies show that
-        most such requests are never fulfilled.
-        """
-        flags = []
-        if re.search(
-            r'data.*available.*upon.*request|'
-            r'data.*available.*on.*request|'
-            r'available.*from.*corresponding.*author',
-            text, re.IGNORECASE
-        ):
+        # Conflict of interest
+        if not has_conflict:
             flags.append(ReproducibilityFlag(
-                flag_type="data_available_on_request",
-                severity="medium",
-                description=(
-                    "'Data available upon request' is a reproducibility "
-                    "risk. Research shows that over 80% of such requests "
-                    "go unfulfilled or receive no response."
-                ),
-                evidence="'Data available upon request' language detected",
-                suggestion=(
-                    "Deposit data in a public repository instead. "
-                    "This increases citation rates and research trust."
+                flag_type   = "missing_conflict_statement",
+                severity    = "low",
+                description = "No conflict of interest statement detected.",
+                evidence    = "No COI or competing interests declaration found.",
+                suggestion  = (
+                    "Add a 'Conflict of Interest' or 'Competing Interests' "
+                    "statement even if there are none to declare."
                 ),
             ))
-        return flags
 
-    # ── scoring ───────────────────────────────────────────────
+        # Funding
+        if not has_funding:
+            flags.append(ReproducibilityFlag(
+                flag_type   = "missing_funding_disclosure",
+                severity    = "low",
+                description = "No funding disclosure or acknowledgment found.",
+                evidence    = "No funding, grant, or sponsor mention detected.",
+                suggestion  = (
+                    "Disclose all funding sources. If unfunded, state 'This research "
+                    "received no specific funding'."
+                ),
+            ))
 
-    def _get_risk_level(self, risk_score: float) -> str:
-        if risk_score >= 0.7:   return "critical"
-        elif risk_score >= 0.4: return "high"
-        elif risk_score >= 0.2: return "medium"
-        return "low"
+        # Limitations
+        if not has_limit:
+            flags.append(ReproducibilityFlag(
+                flag_type   = "missing_limitations",
+                severity    = "low",
+                description = "No limitations section detected.",
+                evidence    = "No limitation, caveat, or future work discussion found.",
+                suggestion  = (
+                    "Add a dedicated Limitations section discussing sample constraints, "
+                    "generalizability, and study design weaknesses."
+                ),
+            ))
 
-    def _write_summary(
-        self,
-        repro_score: float,
-        risk_level: str,
-        flags: list,
-        has_code: bool,
-        has_data: bool,
-    ) -> str:
-        pct = round(repro_score * 100)
+        # ── Score calculation ─────────────────────────────────────────────────
+        core_checklist     = [has_code, has_data, has_pre, has_sw, has_eth]
+        extended_checklist = [has_conflict, has_funding, has_limit, has_raw, has_repl]
 
-        if not flags:
-            return (
-                f"Reproducibility score: {pct}%. "
-                f"All key reproducibility indicators detected."
-            )
+        core_score     = sum(1 for c in core_checklist     if c) / len(core_checklist)
+        extended_score = sum(1 for c in extended_checklist if c) / len(extended_checklist)
+        open_sci_bonus = 0.05 if has_os_badge else 0.0
 
-        missing = []
-        if not has_code: missing.append("code")
-        if not has_data: missing.append("data")
+        repro_score = min(
+            core_score * 0.70 + extended_score * 0.25 + open_sci_bonus,
+            1.0
+        )
 
-        high = sum(1 for f in flags if f.severity == "high")
-        med  = sum(1 for f in flags if f.severity == "medium")
+        # ── Risk level ────────────────────────────────────────────────────────
+        critical_flags = sum(1 for f in flags if f.severity == "high")
+        medium_flags   = sum(1 for f in flags if f.severity == "medium")
 
-        parts = []
-        if high: parts.append(f"{high} critical gap{'s' if high > 1 else ''}")
-        if med:  parts.append(f"{med} concern{'s' if med > 1 else ''}")
+        if critical_flags >= 2:
+            risk_level = "critical"
+        elif critical_flags == 1 or medium_flags >= 2:
+            risk_level = "high"
+        elif medium_flags == 1:
+            risk_level = "medium"
+        else:
+            risk_level = "low"
 
-        return (
-            f"Reproducibility score: {pct}%. "
-            f"Flagged {', '.join(parts)}. "
-            f"Risk level: {risk_level.upper()}."
+        # ── Summary ───────────────────────────────────────────────────────────
+        high_count = sum(1 for f in flags if f.severity == "high")
+        summary = (
+            f"Reproducibility score: {round(repro_score * 100)}%. "
+            f"Flagged {len(flags)} concern(s)"
+            + (f", including {high_count} critical gap(s)" if high_count else "")
+            + (". Note: 'available upon request' is not a valid open science statement"
+               if request_only else "")
+            + f". Risk level: {risk_level.upper()}."
+        )
+
+        return ReproducibilityResult(
+            has_code_link          = has_code,
+            has_data_link          = has_data,
+            has_software_versions  = has_sw,
+            has_preregistration    = has_pre,
+            has_ethics_statement   = has_eth,
+            reproducibility_score  = round(repro_score, 4),
+            risk_level             = risk_level,
+            summary                = summary,
+            flags                  = flags,
+            flags_count            = len(flags),
+            open_science_score     = round(extended_score, 4),
+            has_conflict_statement = has_conflict,
+            has_funding_statement  = has_funding,
+            has_limitations        = has_limit,
+            has_raw_data           = has_raw,
+            has_replication        = has_repl,
         )
