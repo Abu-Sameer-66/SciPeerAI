@@ -1,18 +1,22 @@
-# src/scipeerai/modules/granularity_analyzer.py
-#
-# Statistical Granularity Analyzer
-# Detects: digit preference, too-perfect variance,
-# Benford's Law violations, suspiciously round numbers.
-#
-# Fabricated data tends to look "too clean" —
-# real data has natural messiness. This module
-# catches papers where numbers look manufactured.
-
 import re
 import math
-import collections
 from dataclasses import dataclass, field
+from typing import List, Tuple
 
+
+# ── Constants ─────────────────────────────────────────────────────────────────
+
+BENFORD_EXPECTED = [
+    math.log10(1 + 1 / d) for d in range(1, 10)
+]
+
+SUSPICIOUS_DECIMAL_THRESHOLD = 4   # > 4 decimal places is suspicious
+EXTREME_DECIMAL_THRESHOLD    = 8   # > 8 decimal places is very suspicious
+MIN_NUMBERS_FOR_BENFORD      = 4   # lowered from 5 for better sensitivity
+ROUND_NUMBER_THRESHOLD       = 0.6
+
+
+# ── Data classes ──────────────────────────────────────────────────────────────
 
 @dataclass
 class GranularityFlag:
@@ -31,267 +35,335 @@ class GranularityResult:
     granularity_score:      float
     risk_level:             str
     summary:                str
-    flags:                  list = field(default_factory=list)
-    flags_count:            int  = 0
+    flags:                  List[GranularityFlag] = field(default_factory=list)
+    flags_count:            int = 0
+    suspicious_numbers:     List[str] = field(default_factory=list)
+    extreme_precision:      List[str] = field(default_factory=list)
 
+
+# ── Main class ────────────────────────────────────────────────────────────────
 
 class GranularityAnalyzer:
     """
-    Statistical Granularity Analyzer.
-    Real data has natural digit distribution.
-    Fabricated data shows digit preference (e.g. too many 0s and 5s)
-    and first-digit anomalies (Benford's Law violations).
+    Granularity Analyzer v2.3.4
+
+    Applies Benford's Law and precision analysis to numeric data.
+    Real measurements follow predictable digit distributions —
+    fabricated data does not.
+
+    v2.3.4 upgrades:
+    - Raw string extraction preserves full decimal precision
+    - Extreme precision detection (> 8 decimal places)
+    - Lower Benford threshold (4 numbers instead of 5)
+    - Suspicious precision threshold lowered (> 4 instead of > 5)
+    - Terminal digit bias detection improved
     """
 
-    # extract all decimal numbers from text
-    NUMBER_PAT  = re.compile(r'\b\d+\.\d+\b')
-    INTEGER_PAT = re.compile(r'\b\d{2,}\b')
-
-    # Benford's Law expected first-digit distribution
-    BENFORD_EXPECTED = {
-        1: 0.301, 2: 0.176, 3: 0.125, 4: 0.097,
-        5: 0.079, 6: 0.067, 7: 0.058, 8: 0.051, 9: 0.046
-    }
-
     def analyze(self, text: str) -> GranularityResult:
-        decimals = [float(x) for x in self.NUMBER_PAT.findall(text)]
-        integers = [int(x)   for x in self.INTEGER_PAT.findall(text)
-                    if 10 <= int(x) <= 99999]
-        all_nums = decimals + [float(x) for x in integers]
+        raw_numbers, float_numbers = self._extract_numbers(text)
+        flags:                List[GranularityFlag] = []
+        suspicious_numbers:   List[str] = []
+        extreme_precision:    List[str] = []
 
-        flags = []
+        # ── Check 1: Benford's Law ────────────────────────────────────────────
+        benford_score, benford_flags = self._check_benford(
+            float_numbers, raw_numbers
+        )
+        flags.extend(benford_flags)
 
-        # ── 1. Digit Preference ───────────────────────────────────
-        dp_score, dp_flag = self._digit_preference(decimals)
-        if dp_flag:
-            flags.append(dp_flag)
+        # ── Check 2: Round number clustering ─────────────────────────────────
+        round_ratio, round_flags = self._check_round_numbers(
+            float_numbers, raw_numbers
+        )
+        flags.extend(round_flags)
 
-        # ── 2. Benford's Law ──────────────────────────────────────
-        bf_score, bf_flag = self._benford_check(all_nums)
-        if bf_flag:
-            flags.append(bf_flag)
+        # ── Check 3: Suspicious precision ────────────────────────────────────
+        prec_score, prec_flags, suspicious_numbers, extreme_precision = (
+            self._check_suspicious_precision(raw_numbers)
+        )
+        flags.extend(prec_flags)
 
-        # ── 3. Round Number Ratio ─────────────────────────────────
-        rn_ratio, rn_flag = self._round_number_check(decimals)
-        if rn_flag:
-            flags.append(rn_flag)
+        # ── Check 4: Terminal digit bias ──────────────────────────────────────
+        digit_score, digit_flags = self._check_terminal_digit_bias(
+            float_numbers, raw_numbers
+        )
+        flags.extend(digit_flags)
 
-        # ── 4. Too-Perfect Variance ───────────────────────────────
-        tp_flag = self._too_perfect_check(decimals)
-        if tp_flag:
-            flags.append(tp_flag)
+        # ── Aggregate score ───────────────────────────────────────────────────
+        granularity_score = self._compute_score(
+            benford_score, round_ratio, prec_score, digit_score
+        )
+        risk_level = self._get_risk_level(granularity_score)
 
-        # ── Aggregate Score ───────────────────────────────────────
-        components = [dp_score, bf_score, rn_ratio]
-        score      = round(sum(components) / len(components), 4)
-        level      = self._risk(score, len(flags))
-        summary    = self._build_summary(score, level, len(flags), len(decimals))
+        summary = (
+            f"Granularity analysis of {len(raw_numbers)} numerical values. "
+            f"Anomaly score: {round(granularity_score * 100)}%. "
+            f"{len(flags)} granularity concern(s) detected. "
+            f"Risk level: {risk_level.upper()}."
+        )
 
         return GranularityResult(
-            digit_preference_score = round(dp_score, 4),
-            benford_score          = round(bf_score, 4),
-            round_number_ratio     = round(rn_ratio, 4),
-            granularity_score      = score,
-            risk_level             = level,
+            digit_preference_score = round(digit_score,       4),
+            benford_score          = round(benford_score,      4),
+            round_number_ratio     = round(round_ratio,        4),
+            granularity_score      = round(granularity_score,  4),
+            risk_level             = risk_level,
             summary                = summary,
             flags                  = flags,
             flags_count            = len(flags),
+            suspicious_numbers     = suspicious_numbers,
+            extreme_precision      = extreme_precision,
         )
 
-    # ── internal helpers ─────────────────────────────────────────
+    # ── Private helpers ───────────────────────────────────────────────────────
 
-    def _digit_preference(self, numbers: list):
+    def _extract_numbers(self, text: str) -> Tuple[List[str], List[float]]:
         """
-        Check last digits of decimal numbers.
-        Real data: uniform distribution across 0-9.
-        Fabricated data: too many 0s and 5s.
+        v2.3.4 — Extract numbers preserving full raw string.
+        Raw strings are used for precision checking.
+        Float values are used for Benford and round-number checks.
         """
-        if len(numbers) < 5:
-            return 0.0, None
+        # Raw string extraction — keeps full decimal precision
+        raw_pattern = re.compile(r'\b(\d+\.\d+|\d+)\b')
+        raw_numbers = raw_pattern.findall(text)
 
-        last_digits = []
-        for n in numbers:
-            s = str(n)
-            if '.' in s:
-                last_digits.append(int(s[-1]))
+        float_numbers = []
+        for r in raw_numbers:
+            try:
+                float_numbers.append(float(r))
+            except ValueError:
+                pass
 
-        if not last_digits:
-            return 0.0, None
+        return raw_numbers, float_numbers
 
-        counts    = collections.Counter(last_digits)
-        total     = len(last_digits)
-        zero_five = (counts.get(0, 0) + counts.get(5, 0)) / total
-        expected  = 0.2  # 2 out of 10 digits
+    def _check_benford(
+        self, float_numbers: List[float], raw_numbers: List[str]
+    ) -> Tuple[float, List[GranularityFlag]]:
+        """Apply Benford's Law to first-digit distribution."""
+        flags = []
 
-        score = min((zero_five - expected) / 0.4, 1.0) if zero_five > expected else 0.0
-        score = max(score, 0.0)
+        positives = [n for n in float_numbers if n > 0]
+        if len(positives) < MIN_NUMBERS_FOR_BENFORD:
+            return 0.0, flags
 
-        if zero_five > 0.45:
-            return score, GranularityFlag(
-                flag_type   = "digit_preference_detected",
-                severity    = "high" if zero_five > 0.6 else "medium",
-                description = (
-                    f"Unusual digit preference detected. "
-                    f"{round(zero_five * 100)}% of decimal values end in "
-                    f"0 or 5 — expected ~20% in real data. "
-                    f"Suggests manually entered or rounded values."
-                ),
-                evidence    = (
-                    f"Last-digit analysis: {round(zero_five * 100)}% "
-                    f"end in 0 or 5 (expected: ~20%) | "
-                    f"Sample: {last_digits[:10]}"
-                ),
-                suggestion  = (
-                    "Report raw unrounded values. Verify that "
-                    "data was not manually entered or post-hoc rounded."
-                ),
-            )
-        return score, None
+        first_digits = []
+        for n in positives:
+            s = str(n).lstrip('0').replace('.', '')
+            if s and s[0].isdigit() and s[0] != '0':
+                first_digits.append(int(s[0]))
 
-    def _benford_check(self, numbers: list):
-        """
-        Benford's Law: first digits of naturally occurring
-        numbers follow a logarithmic distribution.
-        Violations suggest fabrication.
-        """
-        valid = [n for n in numbers if n >= 1]
-        if len(valid) < 10:
-            return 0.0, None
-
-        first_digits = [int(str(abs(n)).replace('.', '')[0])
-                        for n in valid if str(abs(n)).replace('.', '')[0] != '0']
         if not first_digits:
-            return 0.0, None
+            return 0.0, flags
 
-        counts = collections.Counter(first_digits)
-        total  = len(first_digits)
+        observed = [
+            first_digits.count(d) / len(first_digits)
+            for d in range(1, 10)
+        ]
 
-        # Chi-square distance from Benford
-        chi_sq = 0.0
-        for d in range(1, 10):
-            observed = counts.get(d, 0) / total
-            expected = self.BENFORD_EXPECTED[d]
-            chi_sq  += ((observed - expected) ** 2) / expected
+        deviation = sum(
+            abs(o - e) for o, e in zip(observed, BENFORD_EXPECTED)
+        ) / 9
 
-        # normalize to 0-1
-        score = min(chi_sq / 15.0, 1.0)
-
-        if score > 0.4:
-            return score, GranularityFlag(
-                flag_type   = "benford_law_violation",
-                severity    = "high" if score > 0.7 else "medium",
+        if deviation > 0.15:
+            flags.append(GranularityFlag(
+                flag_type   = "benford_violation",
+                severity    = "high" if deviation > 0.25 else "medium",
                 description = (
-                    f"First-digit distribution deviates from Benford's Law. "
-                    f"Naturally occurring datasets follow a predictable "
-                    f"logarithmic distribution — deviation suggests "
-                    f"non-natural or fabricated data."
+                    f"First-digit distribution deviates from Benford's Law "
+                    f"(deviation: {round(deviation, 3)}). "
+                    f"Natural data follows Benford's Law — fabricated numbers often do not."
                 ),
                 evidence    = (
-                    f"Chi-square deviation: {round(chi_sq, 3)} "
-                    f"(threshold: 6.0) | "
-                    f"First digits analyzed: {total}"
+                    f"Benford deviation: {round(deviation, 3)} "
+                    f"(threshold: 0.15) | "
+                    f"Numbers analyzed: {len(positives)}"
                 ),
                 suggestion  = (
-                    "Verify data collection process. Large Benford "
-                    "violations in financial or count data are a "
-                    "strong fabrication signal."
+                    "Verify all reported numeric values against raw data. "
+                    "Large Benford deviations are a validated fraud signal."
                 ),
-            )
-        return score, None
+            ))
 
-    def _round_number_check(self, numbers: list):
-        """
-        Too many round numbers (X.0, X.00) suggests
-        manual entry or fabrication.
-        """
-        if len(numbers) < 5:
-            return 0.0, None
+        return round(deviation, 4), flags
 
-        round_count = sum(1 for n in numbers
-                          if abs(n - round(n)) < 0.001)
-        ratio = round_count / len(numbers)
+    def _check_round_numbers(
+        self, float_numbers: List[float], raw_numbers: List[str]
+    ) -> Tuple[float, List[GranularityFlag]]:
+        """Detect suspicious clustering of round numbers."""
+        flags = []
 
-        if ratio > 0.6:
-            return ratio, GranularityFlag(
-                flag_type   = "excessive_round_numbers",
-                severity    = "medium",
-                description = (
-                    f"{round(ratio * 100)}% of reported decimal values "
-                    f"are whole numbers (X.0). Real measurement data "
-                    f"rarely produces this pattern — suggests rounding "
-                    f"or manual data entry."
-                ),
-                evidence    = (
-                    f"{round_count}/{len(numbers)} values are "
-                    f"whole numbers ({round(ratio * 100)}%)"
-                ),
-                suggestion  = (
-                    "Report values to appropriate decimal precision. "
-                    "Avoid post-hoc rounding of raw measurements."
-                ),
-            )
-        return ratio, None
+        if not float_numbers:
+            return 0.0, flags
 
-    def _too_perfect_check(self, numbers: list):
-        """
-        If all reported values have identical decimal precision,
-        this is suspicious — real data has natural variation.
-        """
-        if len(numbers) < 6:
-            return None
-
-        precisions = []
-        for n in numbers:
-            s = str(n)
-            if '.' in s:
-                precisions.append(len(s.split('.')[1]))
-
-        if not precisions:
-            return None
-
-        unique_precisions = len(set(precisions))
-        if unique_precisions == 1 and len(precisions) >= 6:
-            p = precisions[0]
-            return GranularityFlag(
-                flag_type   = "uniform_decimal_precision",
-                severity    = "medium",
-                description = (
-                    f"All {len(precisions)} decimal values reported to "
-                    f"exactly {p} decimal place(s). Real measurement "
-                    f"data rarely has perfectly uniform precision — "
-                    f"suggests post-processing or fabrication."
-                ),
-                evidence    = (
-                    f"All values use exactly {p} decimal place(s) | "
-                    f"Count: {len(precisions)}"
-                ),
-                suggestion  = (
-                    "Report values at their natural precision. "
-                    "Verify that uniform rounding was not applied."
-                ),
-            )
-        return None
-
-    def _risk(self, score: float, flag_count: int) -> str:
-        if flag_count >= 3 or score >= 0.6:
-            return "critical"
-        if flag_count == 2 or score >= 0.4:
-            return "high"
-        if flag_count == 1 or score >= 0.2:
-            return "medium"
-        return "low"
-
-    def _build_summary(self, score: float, level: str,
-                       flag_count: int, num_count: int) -> str:
-        if num_count < 5:
-            return (
-                "Granularity Analysis: Insufficient numerical data "
-                "for full analysis (minimum 5 decimal values required)."
-            )
-        pct = round(score * 100)
-        return (
-            f"Granularity analysis of {num_count} numerical values. "
-            f"Anomaly score: {pct}%. "
-            f"{flag_count} granularity concern(s) detected. "
-            f"Risk level: {level.upper()}."
+        round_count = sum(
+            1 for n in float_numbers
+            if n > 0 and n == int(n) and int(n) % 5 == 0
         )
+        round_ratio = round_count / len(float_numbers)
+
+        if round_ratio > ROUND_NUMBER_THRESHOLD:
+            flags.append(GranularityFlag(
+                flag_type   = "round_number_clustering",
+                severity    = "medium",
+                description = (
+                    f"Unusually high proportion of round numbers detected "
+                    f"({round(round_ratio * 100)}% of values). "
+                    f"Real measurements rarely cluster at multiples of 5 or 10."
+                ),
+                evidence    = (
+                    f"Round number ratio: {round(round_ratio, 3)} "
+                    f"(threshold: {ROUND_NUMBER_THRESHOLD}) | "
+                    f"Round values: {round_count}/{len(float_numbers)}"
+                ),
+                suggestion  = (
+                    "Verify measurement precision. Report actual measured values "
+                    "rather than rounded summaries."
+                ),
+            ))
+
+        return round_ratio, flags
+
+    def _check_suspicious_precision(
+        self, raw_numbers: List[str]
+    ) -> Tuple[float, List[GranularityFlag], List[str], List[str]]:
+        """
+        v2.3.4 — Detect suspicious decimal precision.
+        Uses raw strings to preserve full decimal places.
+        Flags > 4 decimal places as suspicious.
+        Flags > 8 decimal places as extreme (likely fabricated/copy-pasted constants).
+        """
+        flags              = []
+        suspicious         = []
+        extreme            = []
+
+        for raw in raw_numbers:
+            if '.' not in raw:
+                continue
+            decimal_part = raw.split('.')[1]
+            n_decimals   = len(decimal_part)
+
+            if n_decimals > EXTREME_DECIMAL_THRESHOLD:
+                extreme.append(raw)
+            elif n_decimals > SUSPICIOUS_DECIMAL_THRESHOLD:
+                suspicious.append(raw)
+
+        score = 0.0
+
+        if extreme:
+            score = max(score, 0.80)
+            flags.append(GranularityFlag(
+                flag_type   = "extreme_precision",
+                severity    = "high",
+                description = (
+                    f"{len(extreme)} value(s) with extreme decimal precision "
+                    f"(> {EXTREME_DECIMAL_THRESHOLD} decimal places). "
+                    f"This level of precision is physically impossible for most "
+                    f"real measurements and suggests copy-pasted constants or fabricated data."
+                ),
+                evidence    = (
+                    f"Extreme precision values: "
+                    f"{', '.join(extreme[:5])}"
+                    f"{'...' if len(extreme) > 5 else ''}"
+                ),
+                suggestion  = (
+                    "Real measurements should be reported to appropriate significant figures. "
+                    "Values with > 8 decimal places are almost always mathematical constants "
+                    "or fabricated numbers."
+                ),
+            ))
+
+        if suspicious and not extreme:
+            score = max(score, 0.35)
+            flags.append(GranularityFlag(
+                flag_type   = "suspicious_precision",
+                severity    = "medium",
+                description = (
+                    f"{len(suspicious)} value(s) with unusually high decimal precision "
+                    f"(> {SUSPICIOUS_DECIMAL_THRESHOLD} decimal places). "
+                    f"Verify that reported precision matches measurement instrument capability."
+                ),
+                evidence    = (
+                    f"High-precision values: "
+                    f"{', '.join(suspicious[:5])}"
+                    f"{'...' if len(suspicious) > 5 else ''}"
+                ),
+                suggestion  = (
+                    "Report values to the precision of your measurement instrument. "
+                    "Excess precision may indicate data manipulation."
+                ),
+            ))
+
+        return score, flags, suspicious, extreme
+
+    def _check_terminal_digit_bias(
+        self, float_numbers: List[float], raw_numbers: List[str]
+    ) -> Tuple[float, List[GranularityFlag]]:
+        """
+        Detect terminal digit bias.
+        Humans fabricating data tend to prefer certain digits (0, 5)
+        as the last digit of reported values.
+        """
+        flags = []
+
+        terminal_digits = []
+        for raw in raw_numbers:
+            clean = raw.replace('.', '').rstrip('0')
+            if clean and clean[-1].isdigit():
+                terminal_digits.append(int(clean[-1]))
+
+        if len(terminal_digits) < MIN_NUMBERS_FOR_BENFORD:
+            return 0.0, flags
+
+        zero_five_count = terminal_digits.count(0) + terminal_digits.count(5)
+        zero_five_ratio = zero_five_count / len(terminal_digits)
+        expected_ratio  = 0.20  # random expectation: 2/10 digits are 0 or 5
+
+        if zero_five_ratio > 0.50:
+            score = min((zero_five_ratio - expected_ratio) / 0.80, 1.0)
+            flags.append(GranularityFlag(
+                flag_type   = "terminal_digit_bias",
+                severity    = "medium" if zero_five_ratio < 0.70 else "high",
+                description = (
+                    f"Terminal digit bias detected: "
+                    f"{round(zero_five_ratio * 100)}% of values end in 0 or 5 "
+                    f"(expected ~20% by chance). "
+                    f"Humans fabricating data disproportionately choose round endings."
+                ),
+                evidence    = (
+                    f"Zero/five terminal digit ratio: {round(zero_five_ratio, 3)} "
+                    f"(expected: {expected_ratio}) | "
+                    f"Digits analyzed: {len(terminal_digits)}"
+                ),
+                suggestion  = (
+                    "Verify all reported values against raw measurement records. "
+                    "Terminal digit bias is a validated data fabrication signal."
+                ),
+            ))
+            return round(score, 4), flags
+
+        return 0.0, flags
+
+    def _compute_score(
+        self,
+        benford_score: float,
+        round_ratio:   float,
+        prec_score:    float,
+        digit_score:   float,
+    ) -> float:
+        round_component = min(
+            max(round_ratio - ROUND_NUMBER_THRESHOLD, 0) / (1 - ROUND_NUMBER_THRESHOLD),
+            1.0
+        )
+        score = (
+            benford_score   * 0.30 +
+            round_component * 0.20 +
+            prec_score      * 0.30 +
+            digit_score     * 0.20
+        )
+        return min(round(score, 4), 1.0)
+
+    def _get_risk_level(self, score: float) -> str:
+        if score >= 0.70:   return "critical"
+        if score >= 0.45:   return "high"
+        if score >= 0.20:   return "medium"
+        return "low"
