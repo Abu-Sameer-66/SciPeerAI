@@ -4829,7 +4829,7 @@ def analyze_fraud_fingerprint(request: TextAnalysisRequest):
     """Fraud Fingerprinting â€” writing DNA inconsistency detection."""
     try:
         r = _fraud_engine.analyze(_smart_text(request.text, "fraud_fingerprint"))
-        return FraudFingerprintResponse(style_shift_score=r.style_shift_score, precision_inconsistency=r.precision_inconsistency, vocabulary_mixing_score=r.vocabulary_mixing_score, hedge_overuse_score=r.hedge_overuse_score, fingerprint_score=r.fingerprint_score, risk_level=r.risk_level, summary=r.summary, flags=_p5flags(r.flags), flags_count=r.flags_count)
+        return FraudFingerprintResponse(fingerprint_score=r.fingerprint_score, style_consistency=r.style_consistency, ai_phrase_count=r.ai_phrase_count, template_score=r.template_score, authorship_consistency=r.authorship_consistency, section_order_correct=r.section_order_correct, risk_level=r.risk_level, summary=r.summary, flags=_p5flags(r.flags), flags_count=r.flags_count)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
