@@ -4361,16 +4361,17 @@ class Phase5FlagResponse(BaseModel):
     suggestion:  str
 
 class FraudFingerprintResponse(BaseModel):
-    style_shift_score:       float
-    precision_inconsistency: float
-    vocabulary_mixing_score: float
-    hedge_overuse_score:     float
-    fingerprint_score:       float
-    risk_level:              str
-    summary:                 str
-    flags:                   list[Phase5FlagResponse]
-    flags_count:             int
-
+    fingerprint_score:      float
+    style_consistency:      float
+    ai_phrase_count:        int
+    template_score:         float
+    authorship_consistency: float
+    section_order_correct:  bool
+    risk_level:             str
+    summary:                str
+    flags:                  list[Phase5FlagResponse]
+    flags_count:            int
+    
 class TemporalAnomalyResponse(BaseModel):
     collection_years:     list
     cited_years:          list
