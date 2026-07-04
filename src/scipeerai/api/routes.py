@@ -4608,7 +4608,7 @@ def system_status():
             "field_saturation":        True,
             "institutional_conflict":  True,
         },
-        "version":         "2.3.3",
+        "version":         "2.3.4",
         "modules_count":   24,
         "tests_passing":   209,
         "text_extraction": "section-aware",
